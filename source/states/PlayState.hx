@@ -9,6 +9,7 @@ import flixel.group.FlxGroup;
 import flixel.FlxG;
 import flixel.FlxBasic;
 import states.GameOverState;
+import entities.Background;
 
 class PlayState extends FlxState
 {
@@ -28,11 +29,12 @@ class PlayState extends FlxState
 		conveyor = new Conveyor(250, muffins);
 		selector = new Selector();
 
-		add(ui);
+		add(new Background());
 		add(conveyor);
 		add(muffins);
 		add(selector);
 		add(letters);
+		add(ui);
 	}
 
 	public function hasFoundSelection(basic_muffin : FlxBasic) {
