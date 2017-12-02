@@ -20,6 +20,7 @@ class Muffin extends FlxSprite
     public var selector : Selector;
     private var combos : Array<ComboState>;
     private var colorWidth: Float;
+    private var onMistake : Void -> Void;
 
 	public function new()
 	{
@@ -27,8 +28,10 @@ class Muffin extends FlxSprite
         makeGraphic(SIZE, SIZE, 0, true);
 	}
 
-    public function init(Y:Float, speed:Float, combos:Array<FlxKey>) : Void {
+    public function init(Y:Float, speed:Float, combos:Array<FlxKey>, onMistake : Void -> Void) : Void {
         super.reset(0, Y);
+
+        this.onMistake = onMistake;
 
         velocity.x = speed;
 
@@ -62,23 +65,21 @@ class Muffin extends FlxSprite
     }
 
     private function hitCombo(key:FlxKey) {
-        var success = true;
         for (combo in combos) {
-            if (!combo.done) {
-                if (combo.key == key) {
-                    combo.done = true;
-                    drawCombo(combo.x);
-                }
-                else {
-                    success = false;
-                }
+            if (combo.done) {
+                continue;
+            }
+            if (combo.key == key) {
+                combo.done = true;
+                drawCombo(combo.x);
+            } else {
+                this.onMistake();
+                return ;
             }
         }
-        if (success) {
-            UI.score += [10, 50, 100, 250][combos.length - 1];
-            unselect();
-            kill();
-        }
+        UI.score += [10, 50, 100, 250][combos.length - 1];
+        unselect();
+        kill();
     }
 
 	override public function update(elapsed:Float):Void

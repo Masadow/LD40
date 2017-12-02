@@ -38,8 +38,9 @@ class Conveyor extends FlxSprite
         while (comboSize++ < 4) {
             combo.splice(randomizer.int(0, combo.length - 1), 1);
         }
+        randomizer.shuffle(combo);
         var m : Muffin = cast muffins.recycle(Muffin);
-        m.init(randomizer.float(this.y, this.y + this.height - Muffin.SIZE), SPEED, combo);
+        m.init(randomizer.float(this.y, this.y + this.height - Muffin.SIZE), SPEED, combo, popMuffin);
         muffins.add(m);
     }
 
@@ -59,7 +60,7 @@ class Conveyor extends FlxSprite
 
         c = c == 0 && muffins.countLiving() == 0 ? 1 : c;
 
-        probabilityBoost = c == 0 ? probabilityBoost + 5 : 0;
+//        probabilityBoost = c == 0 ? probabilityBoost + 5 : 0;
 
         while (c-- > 0) {
             popMuffin();
