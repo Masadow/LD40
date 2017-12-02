@@ -26,6 +26,7 @@ class Selector extends FlxSprite
 		super.update(elapsed);
 
         if (prev != null && !prev.alive) {
+            prev.unselect();
             unselect();
         }
 	}

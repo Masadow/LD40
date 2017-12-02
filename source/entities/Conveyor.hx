@@ -17,6 +17,7 @@ class Conveyor extends FlxSprite
     private var probabilityBoost : Float;
     private var muffins : FlxGroup;
     private static var SPEED = 100;
+    private var maxCombo : Int;
 
 	public function new(?Y:Float = 0, muffins : FlxGroup)
 	{
@@ -28,12 +29,13 @@ class Conveyor extends FlxSprite
         lastPopped = 0;
         randomizer = new FlxRandom();
         probabilityBoost = 0;
+        maxCombo = 1;
         this.muffins = muffins;
         popMuffin();
 	}
 
     public function popMuffin() : Void {
-        var comboSize = randomizer.int(1, 3);
+        var comboSize = randomizer.int(1, maxCombo);
         var combo = [FlxKey.A, FlxKey.S, FlxKey.D, FlxKey.F];
         while (comboSize++ < 4) {
             combo.splice(randomizer.int(0, combo.length - 1), 1);
@@ -90,6 +92,12 @@ class Conveyor extends FlxSprite
         if (lastPopped > 0.5) {
             lastPopped -= 0.5;
             popMuffins();
+        }
+
+        if (elapsedTotal > 20) {
+            maxCombo = 3;
+        } else if (elapsedTotal > 10) {
+            maxCombo = 2;
         }
 
         checkMuffins();
