@@ -94,7 +94,7 @@ class Conveyor extends FlxSprite
             popMuffins();
         }
 
-        if (elapsedTotal > 20) {
+        if (elapsedTotal > 30) {
             maxCombo = 3;
         } else if (elapsedTotal > 10) {
             maxCombo = 2;
