@@ -60,6 +60,7 @@ class Muffin extends FlxSprite
             FlxSpriteUtil.drawRect(this, x, 0, colorWidth, SIZE, comboColor);
             var letter : FlxText = cast PlayState.letters.recycle(FlxText);
             letter.y = y + _halfSize.y;
+            letter.x = this.x + x + colorWidth / 2 - 8;
             letter.text = sletter;
             letter.size = 24;
             this.combos.push({
