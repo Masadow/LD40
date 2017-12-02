@@ -16,7 +16,7 @@ class Conveyor extends FlxSprite
     private var randomizer : FlxRandom;
     private var probabilityBoost : Float;
     private var muffins : FlxGroup;
-    private static var SPEED = 275;
+    private static var SPEED = 100;
 
 	public function new(?Y:Float = 0, muffins : FlxGroup)
 	{
