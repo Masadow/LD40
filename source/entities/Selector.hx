@@ -24,6 +24,10 @@ class Selector extends FlxSprite
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+
+        if (prev != null && !prev.alive) {
+            unselect();
+        }
 	}
 
     public function select(muffin:Muffin) {

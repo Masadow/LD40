@@ -76,7 +76,6 @@ class Muffin extends FlxSprite
         }
         if (success) {
             UI.score += [10, 50, 100, 250][combos.length - 1];
-            selector.unselect();
             unselect();
             kill();
         }

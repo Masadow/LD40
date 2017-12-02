@@ -8,7 +8,9 @@ import flixel.FlxG;
 class UI extends FlxGroup {
 
     public static var score : Int;
+    public static var health : Int;
     public var scoreTxt : FlxText;
+    public var healthTxt : FlxText;
 
     public function new() {
         super();
@@ -20,6 +22,9 @@ class UI extends FlxGroup {
 
         UI.score = 0;
         addScore();
+
+        UI.health = 5;
+        addHealth();
     }
 
     private function addAction(x : Float, y : Float, letter : String, color : FlxColor) : Void {
@@ -35,9 +40,16 @@ class UI extends FlxGroup {
         add(scoreTxt);
     }
 
+    function addHealth() {
+        healthTxt = new FlxText(FlxG.width - 200, 120, 200, "");
+        healthTxt.size = 32;
+        add(healthTxt);
+    }
+
     public override function update(elapsed:Float) {
         super.update(elapsed);
 
-        scoreTxt.text = "" + score;
+        scoreTxt.text = "Score: " + score;
+        healthTxt.text = "Life: " + health;
     }
 }

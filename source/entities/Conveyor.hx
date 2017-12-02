@@ -7,6 +7,7 @@ import flixel.math.FlxRandom;
 import flixel.group.FlxGroup;
 import entities.Muffin;
 import flixel.input.keyboard.FlxKey;
+import flixel.FlxBasic;
 
 class Conveyor extends FlxSprite
 {
@@ -15,7 +16,7 @@ class Conveyor extends FlxSprite
     private var randomizer : FlxRandom;
     private var probabilityBoost : Float;
     private var muffins : FlxGroup;
-    private static var SPEED = 75;
+    private static var SPEED = 275;
 
 	public function new(?Y:Float = 0, muffins : FlxGroup)
 	{
@@ -32,7 +33,7 @@ class Conveyor extends FlxSprite
 	}
 
     public function popMuffin() : Void {
-        var comboSize = randomizer.int(1, 4);
+        var comboSize = randomizer.int(1, 3);
         var combo = [FlxKey.A, FlxKey.S, FlxKey.D, FlxKey.F];
         while (comboSize++ < 4) {
             combo.splice(randomizer.int(0, combo.length - 1), 1);
@@ -56,11 +57,26 @@ class Conveyor extends FlxSprite
             c++;
         }
 
+        c = c == 0 && muffins.countLiving() == 0 ? 1 : c;
+
         probabilityBoost = c == 0 ? probabilityBoost + 5 : 0;
 
         while (c-- > 0) {
             popMuffin();
         }
+    }
+
+    private function checkMuffins() : Void
+    {
+        muffins.forEachAlive(function (basic_muffin : FlxBasic) {
+            var muffin : Muffin = cast basic_muffin;
+
+            if (muffin.x > x + width) {
+                muffin.alive = false;
+                muffin.velocity.x = 0;
+                UI.health -= 1;
+            }
+        });
     }
 
 	override public function update(elapsed:Float):Void
@@ -74,5 +90,7 @@ class Conveyor extends FlxSprite
             lastPopped -= 0.5;
             popMuffins();
         }
+
+        checkMuffins();
 	}
 }

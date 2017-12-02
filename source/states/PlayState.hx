@@ -1,4 +1,4 @@
-package;
+package states;
 
 import flixel.FlxState;
 import entities.Conveyor;
@@ -7,8 +7,8 @@ import entities.Selector;
 import entities.UI;
 import flixel.group.FlxGroup;
 import flixel.FlxG;
-import flixel.FlxCamera;
 import flixel.FlxBasic;
+import states.GameOverState;
 
 class PlayState extends FlxState
 {
@@ -43,6 +43,11 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+
+		if (UI.health == 0) {
+			FlxG.switchState(new GameOverState(UI.score));
+			return ;
+		}
 
 		if (FlxG.mouse.justPressed) {
 			muffins.forEachAlive(hasFoundSelection);
