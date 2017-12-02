@@ -7,8 +7,11 @@ import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxSpriteUtil;
 import flixel.FlxG;
 import entities.UI;
+import flixel.text.FlxText;
+import states.PlayState;
 
 typedef ComboState = {
+    letter: FlxText,
     key: FlxKey,
     done: Bool,
     x: Float
@@ -40,17 +43,27 @@ class Muffin extends FlxSprite
         this.combos = new Array<ComboState>();
         for (combo in combos) {
             var comboColor : FlxColor = null;
+            var sletter = "";
             if (combo == FlxKey.A) {
                 comboColor = FlxColor.RED;
+                sletter = "A";
             } else if (combo == FlxKey.S) {
                 comboColor = FlxColor.BROWN;
+                sletter = "S";
             } else if (combo == FlxKey.D) {
                 comboColor = FlxColor.GREEN;
+                sletter = "D";
             } else if (combo == FlxKey.F) {
                 comboColor = FlxColor.PURPLE;
+                sletter = "F";
             }
             FlxSpriteUtil.drawRect(this, x, 0, colorWidth, SIZE, comboColor);
+            var letter : FlxText = cast PlayState.letters.recycle(FlxText);
+            letter.y = y + _halfSize.y;
+            letter.text = sletter;
+            letter.size = 24;
             this.combos.push({
+                letter: letter,
                 key: combo,
                 x: x,
                 done: false
@@ -82,9 +95,21 @@ class Muffin extends FlxSprite
         kill();
     }
 
+    override public function kill():Void {
+        super.kill();
+
+        for (combo in combos) {
+            combo.letter.kill();
+        }
+    }
+
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+
+        for (combo in combos) {
+            combo.letter.x = x + combo.x + colorWidth / 2 - 8;
+        }
 
         if (selector != null) {
             selector.x = x;

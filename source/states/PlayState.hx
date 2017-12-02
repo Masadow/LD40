@@ -16,12 +16,14 @@ class PlayState extends FlxState
 	public var conveyor : Conveyor;
 	public var selector : Selector;
 	public var ui : UI;
+	public static var letters : FlxGroup;
 
 	override public function create():Void
 	{
 		super.create();
 
 		ui = new UI();
+		letters = new FlxGroup();
 		muffins = new FlxGroup();
 		conveyor = new Conveyor(250, muffins);
 		selector = new Selector();
@@ -30,6 +32,7 @@ class PlayState extends FlxState
 		add(conveyor);
 		add(muffins);
 		add(selector);
+		add(letters);
 	}
 
 	public function hasFoundSelection(basic_muffin : FlxBasic) {
