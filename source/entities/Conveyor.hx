@@ -51,6 +51,18 @@ class Conveyor extends FlxGroup
 
         var conveyor_scale = 0.75 * Main.global_scale;
 
+
+        // Position shadow
+        x = 0;
+        while (x < FlxG.width) {
+            var sprite = new FlxSprite(x, 513, "assets/images/belt_shadow.png");
+            sprite.x -= (Main.global_scale * sprite.width) / 4;
+            sprite.y -= (Main.global_scale * sprite.height) / 4;
+            sprite.scale.set(Main.global_scale, Main.global_scale);
+            x += Main.global_scale * sprite.width;
+            add(sprite);
+        }
+
         var i = 0;
         while (i++ < 3) {
             x = 0;
