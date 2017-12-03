@@ -43,12 +43,21 @@ class Muffin extends FlxSpriteGroup
 
         var baseOffsetX = 15;
         var baseOffsetY = 90;
+        #if html5
+        baseSprites = {
+            left: new FlxSprite(-2 + baseOffsetX, 1 + baseOffsetY, "assets/images/muffin/base/left_white.png"),
+            mid_left: new FlxSprite(37 + baseOffsetX, 0 + baseOffsetY, "assets/images/muffin/base/mid_left_white.png"),
+            mid_right: new FlxSprite(52 + baseOffsetX, 2 + baseOffsetY, "assets/images/muffin/base/mid_right_white.png"),
+            right: new FlxSprite(66 + baseOffsetX, 0 + baseOffsetY, "assets/images/muffin/base/right_white.png")
+        };
+        #else
         baseSprites = {
             left: new FlxSprite(-2 + baseOffsetX, 0 + baseOffsetY, "assets/images/muffin/base/left_white.png"),
             mid_left: new FlxSprite(37 + baseOffsetX, 0 + baseOffsetY, "assets/images/muffin/base/mid_left_white.png"),
             mid_right: new FlxSprite(52 + baseOffsetX, 1 + baseOffsetY, "assets/images/muffin/base/mid_right_white.png"),
             right: new FlxSprite(66 + baseOffsetX, 0 + baseOffsetY, "assets/images/muffin/base/right_white.png")
         };
+        #end
 
         headSprite = new FlxSprite(0, 0, "assets/images/muffin/head.png");
         letters = [
