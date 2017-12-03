@@ -13,7 +13,9 @@ typedef Belt = {
     busyTimer : Float,
     queue : Int,
     muffins: FlxGroup,
-    edge: FlxSprite
+    edge: FlxSprite,
+    speed: Float,
+    convs: Array<FlxSprite>
 }
 
 
@@ -24,11 +26,15 @@ class Conveyor extends FlxGroup
     private var randomizer : FlxRandom;
     private var probabilityBoost : Float;
     private static var SPEED = 162;
+    private static var ANIM_SPEED_FACTOR = 15 / 162;
+    private static var SPEEDUP_TIMER = 10;
+    private static var SPEEDUP_FACTOR = 1.1;
     private static var BUSY_TIMEOUT = 1;
     private var maxCombo : Int;
     private var y : Float;
     private var height : Float;
     private var belts : Array<Belt>;
+    private var timerBeforeSpeedUp : Float;
 
 	public function new(?Y:Float = 0)
 	{
@@ -42,6 +48,7 @@ class Conveyor extends FlxGroup
         randomizer = new FlxRandom();
         probabilityBoost = 0;
         maxCombo = 1;
+        timerBeforeSpeedUp = SPEEDUP_TIMER;
         popMuffin();
 	}
 
@@ -66,10 +73,11 @@ class Conveyor extends FlxGroup
         var i = 0;
         while (i++ < 3) {
             x = 0;
+            var convs = new Array<FlxSprite>();
             while (x < FlxG.width) {
                 var sprite = new FlxSprite(x, y);
                 sprite.loadGraphic("assets/images/conveyor/belt.png", true, 259, 231);
-                sprite.animation.add("run", [4, 0, 3, 1, 6, 7, 2, 5], 15);
+                sprite.animation.add("run", [4, 0, 3, 1, 6, 7, 2, 5], Math.round(SPEED * ANIM_SPEED_FACTOR));
                 sprite.animation.play("run");
                 sprite.x -= (Main.global_scale * sprite.width) / 4;
                 sprite.y -= (Main.global_scale * sprite.height) / 4;
@@ -77,6 +85,7 @@ class Conveyor extends FlxGroup
                 x += Main.global_scale * sprite.width;
                 y_incr = Main.global_scale * sprite.height;
                 add(sprite);
+                convs.push(sprite);
             }
 
             var edge = new FlxSprite(FlxG.width - 100 - i * 10, y - 40, "assets/images/conveyor/edge.png");
@@ -91,7 +100,9 @@ class Conveyor extends FlxGroup
                 busyTimer: 0,
                 queue: 0,
                 muffins: new FlxGroup(),
-                edge: edge
+                edge: edge,
+                speed: SPEED,
+                convs: convs
             });
         }
 
@@ -104,14 +115,15 @@ class Conveyor extends FlxGroup
     }
 
     private function popOnBelt(beltId : Int) : Void {
-        var comboSize = randomizer.int(1, maxCombo);
+        var comboSize : Int= cast Math.min(randomizer.weightedPick([60, 30, 10]) + 1, maxCombo);
         var combo = [FlxKey.A, FlxKey.S, FlxKey.D, FlxKey.F];
         while (comboSize++ < 4) {
             combo.splice(randomizer.int(0, combo.length - 1), 1);
         }
         randomizer.shuffle(combo);
-        var m : Muffin = cast belts[beltId].muffins.recycle(Muffin);
-        m.init(belts[beltId].y - Muffin.BASE_HEIGHT, SPEED, combo, popMuffin);
+        var belt = belts[beltId];
+        var m : Muffin = cast belt.muffins.recycle(Muffin);
+        m.init(belt.y - Muffin.BASE_HEIGHT, belt.speed, combo, popMuffin);
     }
 
     public function popMuffin() : Void {
@@ -138,7 +150,7 @@ class Conveyor extends FlxGroup
         }
         c = c == 0 && living == 0 ? 1 : c;
 
-//        probabilityBoost = c == 0 ? probabilityBoost + 5 : 0;
+        probabilityBoost = c == 0 ? probabilityBoost + 5 : 0;
 
         while (c-- > 0) {
             popMuffin();
@@ -175,6 +187,19 @@ class Conveyor extends FlxGroup
 
         lastPopped += elapsed;
         elapsedTotal += elapsed;
+        timerBeforeSpeedUp -= elapsed;
+
+        if (timerBeforeSpeedUp < 0) {
+            timerBeforeSpeedUp = SPEEDUP_TIMER;
+            var belt = belts[randomizer.int(0, 2)];
+            belt.speed *= SPEEDUP_FACTOR;
+            for (muffin in belt.muffins) {
+                (cast muffin).velocity.x *= SPEEDUP_FACTOR;
+            }
+            for (conv in belt.convs) {
+                conv.animation.getByName("run").frameRate = Math.round(belt.speed * ANIM_SPEED_FACTOR);
+            }
+        }
 
         if (lastPopped > 0.5) {
             lastPopped -= 0.5;
