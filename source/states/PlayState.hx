@@ -34,7 +34,13 @@ class PlayState extends FlxState
 	}
 
 	public function hasFoundSelection(muffin : Muffin) {
-		if (FlxG.mouse.overlaps(muffin)) {
+		var mox = FlxG.mouse.x,
+			moy = FlxG.mouse.y,
+			mux = muffin.x,
+			muy = muffin.y,
+			width = 130,
+			height = 150;
+		if (mox > mux && mox < mux + width && moy > muy && moy < muy + height) {
 			selector.select(muffin);
 		}
 	}
