@@ -23,7 +23,7 @@ class Conveyor extends FlxGroup
     private var lastPopped : Float;
     private var randomizer : FlxRandom;
     private var probabilityBoost : Float;
-    private static var SPEED = 150;
+    private static var SPEED = 162;
     private static var BUSY_TIMEOUT = 1;
     private var maxCombo : Int;
     private var y : Float;
@@ -69,7 +69,7 @@ class Conveyor extends FlxGroup
             while (x < FlxG.width) {
                 var sprite = new FlxSprite(x, y);
                 sprite.loadGraphic("assets/images/conveyor/belt.png", true, 259, 231);
-                sprite.animation.add("run", [0, 1, 2, 3, 4, 5, 6, 7], Math.round(15));
+                sprite.animation.add("run", [4, 0, 3, 1, 6, 7, 2, 5], 15);
                 sprite.animation.play("run");
                 sprite.x -= (Main.global_scale * sprite.width) / 4;
                 sprite.y -= (Main.global_scale * sprite.height) / 4;
