@@ -155,6 +155,7 @@ class Conveyor extends FlxGroup
                     muffin.alive = false;
                     muffin.velocity.x = 0;
                     UI.health -= 1;
+                    FlxG.camera.shake(0.01, 0.2);
                 }
             });
         }
