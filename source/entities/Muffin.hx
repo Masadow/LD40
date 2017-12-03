@@ -1,5 +1,6 @@
 package entities;
 
+import flixel.group.FlxSpriteGroup;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import entities.Selector;
@@ -9,6 +10,7 @@ import flixel.FlxG;
 import entities.UI;
 import flixel.text.FlxText;
 import states.PlayState;
+import flixel.math.FlxPoint;
 
 typedef ComboState = {
     letter: FlxText,
@@ -17,28 +19,94 @@ typedef ComboState = {
     x: Float
 }
 
-class Muffin extends FlxSprite
+typedef BaseSprites = {
+    left: FlxSprite,
+    mid_left: FlxSprite,
+    mid_right: FlxSprite,
+    right: FlxSprite
+}
+
+class Muffin extends FlxSpriteGroup
 {
-    public static var SIZE = 64;
+    public static var BASE_HEIGHT = 150;
     public var selector : Selector;
     private var combos : Array<ComboState>;
     private var colorWidth: Float;
     private var onMistake : Void -> Void;
 
+    private var headSprite : FlxSprite;
+    private var selectorSprite : FlxSprite;
+    private var baseSprites : BaseSprites;
+
 	public function new()
 	{
 		super(0, 0);
-        makeGraphic(SIZE, SIZE, 0, true);
+
+        this.width = 199 * Main.global_scale;
+        this.height = 220 * Main.global_scale;
+        this._halfSize = FlxPoint.get(this.width / 2, this.height / 2);
+
+        //Build the muffin from bottom to top
+        /*
+        selectorSprite = new FlxSprite(10, 160, "assets/images/unselected.png");
+
+
+        var baseOffsetX = 32;
+        var baseOffsetY = 135;
+        baseSprites = {
+            left: new FlxSprite(0 + baseOffsetX, 0 + baseOffsetY, "assets/images/base_1.png"),
+            mid_left: new FlxSprite(49 + baseOffsetX, 0 + baseOffsetY, "assets/images/base_2.png"),
+            mid_right: new FlxSprite(72 + baseOffsetX, 1 + baseOffsetY, "assets/images/base_3.png"),
+            right: new FlxSprite(94 + baseOffsetX, 1 + baseOffsetY, "assets/images/base_4.png")
+        };
+        */
+
+        selectorSprite = new FlxSprite(5, 110, "assets/images/unselected.png");
+
+
+        var baseOffsetX = 22;
+        var baseOffsetY = 90;
+        baseSprites = {
+            left: new FlxSprite(0 + baseOffsetX, 0 + baseOffsetY, "assets/images/base_1.png"),
+            mid_left: new FlxSprite(30 + baseOffsetX, 0 + baseOffsetY, "assets/images/base_2.png"),
+            mid_right: new FlxSprite(45 + baseOffsetX, 1 + baseOffsetY, "assets/images/base_3.png"),
+            right: new FlxSprite(59 + baseOffsetX, 1 + baseOffsetY, "assets/images/base_4.png")
+        };
+
+        headSprite = new FlxSprite(0, 0, "assets/images/head.png");
+
+        add(selectorSprite);
+        add(baseSprites.left);
+        add(baseSprites.mid_left);
+        add(baseSprites.mid_right);
+        add(baseSprites.right);
+        add(headSprite);
+
+        reposition_sprite(selectorSprite);
+        reposition_sprite(baseSprites.left);
+        reposition_sprite(baseSprites.mid_left);
+        reposition_sprite(baseSprites.mid_right);
+        reposition_sprite(baseSprites.right);
+        reposition_sprite(headSprite);
 	}
 
+
+    private function reposition_sprite(sprite : FlxSprite) {
+        sprite.scale.set(Main.global_scale, Main.global_scale);
+        sprite.x -= (Main.global_scale * sprite.width) / 4;
+        sprite.y -= (Main.global_scale * sprite.height) / 4;
+    }
+
     public function init(Y:Float, speed:Float, combos:Array<FlxKey>, onMistake : Void -> Void) : Void {
-        super.reset(0, Y);
+//        super.reset(0, Y);
+        x = 0;
+        y = Y;
 
         this.onMistake = onMistake;
 
         velocity.x = speed;
 
-        colorWidth = SIZE / combos.length;
+        colorWidth = width / combos.length;
         var x = 0.;
         this.combos = new Array<ComboState>();
         for (combo in combos) {
@@ -57,7 +125,7 @@ class Muffin extends FlxSprite
                 comboColor = FlxColor.PURPLE;
                 sletter = "F";
             }
-            FlxSpriteUtil.drawRect(this, x, 0, colorWidth, SIZE, comboColor);
+//            FlxSpriteUtil.drawRect(this, x, 0, colorWidth, SIZE, comboColor);
             var letter : FlxText = cast PlayState.letters.recycle(FlxText);
             letter.y = y + _halfSize.y;
             letter.x = this.x + x + colorWidth / 2 - 8;
@@ -75,7 +143,7 @@ class Muffin extends FlxSprite
 
     private function drawCombo(x : Float) {
         // Visually mark a combo as done
-        FlxSpriteUtil.drawRect(this, x, 0, colorWidth, SIZE, FlxColor.WHITE);
+        FlxSpriteUtil.drawRect(this, x, 0, colorWidth, height, FlxColor.WHITE);
     }
 
     private function hitCombo(key:FlxKey) {
@@ -107,6 +175,8 @@ class Muffin extends FlxSprite
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+
+        return ;
 
         for (combo in combos) {
             combo.letter.x = x + combo.x + colorWidth / 2 - 8;

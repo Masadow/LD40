@@ -8,6 +8,11 @@ import entities.Muffin;
 import flixel.input.keyboard.FlxKey;
 import flixel.FlxBasic;
 
+typedef Belt = {
+    y: Float,
+    lastUsed : Float
+}
+
 class Conveyor extends FlxGroup
 {
     private var elapsedTotal : Float;
@@ -19,6 +24,7 @@ class Conveyor extends FlxGroup
     private var maxCombo : Int;
     private var y : Float;
     private var height : Float;
+    private var belts : Array<Belt>;
 
 	public function new(?Y:Float = 0, muffins : FlxGroup)
 	{
@@ -37,6 +43,7 @@ class Conveyor extends FlxGroup
 	}
 
     public function addConveyors() : Void {
+        belts = new Array<Belt>();
         var x = 0., y = this.y, y_incr = 0.;
 
         var conveyor_scale = 0.75 * Main.global_scale;
@@ -58,6 +65,11 @@ class Conveyor extends FlxGroup
             }
 
             y += y_incr - 30;
+
+            belts.push({
+                y: y - 10,
+                lastUsed: -5
+            });
         }
 
         height = y - this.y;
@@ -71,7 +83,7 @@ class Conveyor extends FlxGroup
         }
         randomizer.shuffle(combo);
         var m : Muffin = cast muffins.recycle(Muffin);
-        m.init(randomizer.float(this.y, this.y + this.height - Muffin.SIZE), SPEED, combo, popMuffin);
+        m.init(belts[randomizer.int(0, 2)].y - Muffin.BASE_HEIGHT, SPEED, combo, popMuffin);
         muffins.add(m);
     }
 

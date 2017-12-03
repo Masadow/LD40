@@ -11,10 +11,10 @@ class Selector extends FlxSprite
 
 	public function new()
 	{
-		super(-Muffin.SIZE, -Muffin.SIZE);
+		super(-Muffin.BASE_HEIGHT, -Muffin.BASE_HEIGHT);
 
-        makeGraphic(Muffin.SIZE, Muffin.SIZE, FlxColor.TRANSPARENT, false, "selector");
-        FlxSpriteUtil.drawRect(this, 2, 1, Muffin.SIZE - 4, Muffin.SIZE - 3, FlxColor.TRANSPARENT, {
+        makeGraphic(Muffin.BASE_HEIGHT, Muffin.BASE_HEIGHT, FlxColor.TRANSPARENT, false, "selector");
+        FlxSpriteUtil.drawRect(this, 2, 1, Muffin.BASE_HEIGHT - 4, Muffin.BASE_HEIGHT - 3, FlxColor.TRANSPARENT, {
             thickness: 3,
             color: FlxColor.BLUE
         });
@@ -45,7 +45,7 @@ class Selector extends FlxSprite
 
     public function unselect() {
         prev = null;
-        x = -Muffin.SIZE;
-        y = -Muffin.SIZE;
+        x = -Muffin.BASE_HEIGHT;
+        y = -Muffin.BASE_HEIGHT;
     }
 }
