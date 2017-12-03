@@ -8,6 +8,7 @@ import entities.UI;
 import flixel.text.FlxText;
 import states.PlayState;
 import flixel.math.FlxPoint;
+import flixel.group.FlxGroup;
 
 typedef ComboState = {
     letter: FlxText,
@@ -31,6 +32,7 @@ class Muffin extends FlxSpriteGroup
     private var headSprite : FlxSprite;
     private var selectorSprite : FlxSprite;
     private var baseSprites : BaseSprites;
+    private var letters : Array<FlxText>;
 
     private var selected : Bool;
 
@@ -52,6 +54,12 @@ class Muffin extends FlxSpriteGroup
         };
 
         headSprite = new FlxSprite(0, 0, "assets/images/head.png");
+        letters = [
+            new FlxText(0, 103, 40, "A\n ", 12),
+            new FlxText(0, 103, 40, "S\n ", 12),
+            new FlxText(0, 103, 40, "D\n ", 12),
+            new FlxText(0, 103, 40, "F\n ", 12)
+        ];
 
         add(selectorSprite);
         add(baseSprites.left);
@@ -59,6 +67,10 @@ class Muffin extends FlxSpriteGroup
         add(baseSprites.mid_right);
         add(baseSprites.right);
         add(headSprite);
+        for (letter in letters) {
+            letter.alpha = 0;
+            add(letter);
+        }
 
         reposition_sprite(selectorSprite);
         reposition_sprite(baseSprites.left);
@@ -91,6 +103,10 @@ class Muffin extends FlxSpriteGroup
         x = -130;
         y = Y;
 
+        for (letter in letters) {
+            letter.alpha = 0;
+        }
+
         this.onMistake = onMistake;
 
         velocity.x = speed;
@@ -115,20 +131,18 @@ class Muffin extends FlxSpriteGroup
  
         var x = 0.;
         for (combo in combos) {
-            var sletter = "";
+            var idx = 0;
             if (combo == FlxKey.A) {
-                sletter = "A";
+                idx = 0;
             } else if (combo == FlxKey.S) {
-                sletter = "S";
+                idx = 1;
             } else if (combo == FlxKey.D) {
-                sletter = "D";
+                idx = 2;
             } else if (combo == FlxKey.F) {
-                sletter = "F";
+                idx = 3;
             }
-            var letter : FlxText = cast PlayState.letters.recycle(FlxText);
-            letter.y = y + 103;
-            letter.text = sletter + "\n ";
-            letter.size = 12;
+            var letter : FlxText = letters[idx];
+            letter.alpha = 255;
             this.combos.push({
                 letter: letter,
                 key: combo,
@@ -187,22 +201,18 @@ class Muffin extends FlxSpriteGroup
 
     override public function kill():Void {
         super.kill();
-
-        for (combo in combos) {
-            combo.letter.kill();
-        }
     }
 
     public function positionLetters() {
         if (combos.length == 1) {
-            combos[0].letter.x = baseSprites.mid_right.x - 5;
+            combos[0].letter.x = -75;
         } else if (combos.length == 2) {
-            combos[0].letter.x = baseSprites.mid_left.x - 8;
-            combos[1].letter.x = baseSprites.right.x;
+            combos[0].letter.x = -90;
+            combos[1].letter.x = -60;
         } else if (combos.length == 3) {
-            combos[0].letter.x = baseSprites.left.x + 30;
-            combos[1].letter.x = baseSprites.mid_right.x - 8;
-            combos[2].letter.x = baseSprites.right.x + 8;
+            combos[0].letter.x = -97;
+            combos[1].letter.x = -75;
+            combos[2].letter.x = -50;
         }
     }
 
@@ -210,7 +220,7 @@ class Muffin extends FlxSpriteGroup
 	{
 		super.update(elapsed);
 
-        positionLetters();
+//        positionLetters();
 
         if (selected) {
             if (FlxG.keys.justPressed.A) {

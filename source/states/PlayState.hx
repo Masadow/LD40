@@ -7,7 +7,6 @@ import entities.Selector;
 import entities.UI;
 import flixel.group.FlxGroup;
 import flixel.FlxG;
-import flixel.FlxBasic;
 import states.GameOverState;
 import entities.Background;
 
@@ -16,20 +15,17 @@ class PlayState extends FlxState
 	public var conveyor : Conveyor;
 	public var selector : Selector;
 	public var ui : UI;
-	public static var letters : FlxGroup;
 
 	override public function create():Void
 	{
 		super.create();
 
 		ui = new UI();
-		letters = new FlxGroup();
 		selector = new Selector();
 		conveyor = new Conveyor(180);
 
 		add(new Background());
 		add(conveyor);
-		add(letters);
 		add(ui);
 	}
 
