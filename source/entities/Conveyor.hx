@@ -2,14 +2,13 @@ package entities;
 
 import flixel.FlxSprite;
 import flixel.FlxG;
-import flixel.util.FlxColor;
 import flixel.math.FlxRandom;
 import flixel.group.FlxGroup;
 import entities.Muffin;
 import flixel.input.keyboard.FlxKey;
 import flixel.FlxBasic;
 
-class Conveyor extends FlxSprite
+class Conveyor extends FlxGroup
 {
     private var elapsedTotal : Float;
     private var lastPopped : Float;
@@ -18,12 +17,15 @@ class Conveyor extends FlxSprite
     private var muffins : FlxGroup;
     private static var SPEED = 100;
     private var maxCombo : Int;
+    private var y : Float;
+    private var height : Float;
 
 	public function new(?Y:Float = 0, muffins : FlxGroup)
 	{
-		super(0, Y);
+        super();
+        y = Y;
 
-        makeGraphic(FlxG.width - 100, cast(FlxG.height - (Y * 2)), FlxColor.GRAY);
+        addConveyors();
 
         elapsedTotal = 0;
         lastPopped = 0;
@@ -33,6 +35,33 @@ class Conveyor extends FlxSprite
         this.muffins = muffins;
         popMuffin();
 	}
+
+    public function addConveyors() : Void {
+        var x = 0., y = this.y, y_incr = 0.;
+
+        var conveyor_scale = 0.75 * Main.global_scale;
+
+        var i = 0;
+        while (i++ < 3) {
+            x = 0;
+            while (x < FlxG.width) {
+                var sprite = new FlxSprite(x, y);
+                sprite.loadGraphic("assets/images/belt.png", true, 345, 308);
+                sprite.animation.add("run", [0, 1, 2, 3, 4, 5, 6, 7], 15);
+                sprite.animation.play("run");
+                sprite.x -= (conveyor_scale * sprite.width) / 2;
+                sprite.y -= (conveyor_scale * sprite.height) / 2;
+                sprite.scale.set(conveyor_scale, conveyor_scale);
+                x += conveyor_scale * sprite.width;
+                y_incr = conveyor_scale * sprite.height;
+                add(sprite);
+            }
+
+            y += y_incr - 30;
+        }
+
+        height = y - this.y;
+    }
 
     public function popMuffin() : Void {
         var comboSize = randomizer.int(1, maxCombo);
@@ -74,7 +103,7 @@ class Conveyor extends FlxSprite
         muffins.forEachAlive(function (basic_muffin : FlxBasic) {
             var muffin : Muffin = cast basic_muffin;
 
-            if (muffin.x > x + width) {
+            if (muffin.x > FlxG.width) {
                 muffin.alive = false;
                 muffin.velocity.x = 0;
                 UI.health -= 1;

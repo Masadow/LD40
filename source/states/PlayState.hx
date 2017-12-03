@@ -26,7 +26,7 @@ class PlayState extends FlxState
 		ui = new UI();
 		letters = new FlxGroup();
 		muffins = new FlxGroup();
-		conveyor = new Conveyor(250, muffins);
+		conveyor = new Conveyor(180, muffins);
 		selector = new Selector();
 
 		add(new Background());
