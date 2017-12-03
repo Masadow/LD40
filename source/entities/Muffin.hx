@@ -118,7 +118,7 @@ class Muffin extends FlxSpriteGroup
             baseSprites.right.loadGraphic("assets/images/base/right_"+ get_combo_color(combos[2]) +".png");
         }
  
-        var colorWidth = width / combos.length;
+        colorWidth = width / combos.length;
         var x = 0.;
         for (combo in combos) {
             var sletter = "";
@@ -132,17 +132,17 @@ class Muffin extends FlxSpriteGroup
                 sletter = "F";
             }
             var letter : FlxText = cast PlayState.letters.recycle(FlxText);
-            letter.y = y + _halfSize.y;
-            letter.x = this.x + x + colorWidth / 2 - 8;
+            letter.y = y + 103;
             letter.text = sletter;
-            letter.size = 24;
+            letter.size = 12;
             this.combos.push({
                 letter: letter,
                 key: combo,
                 done: false
             });
-            x += colorWidth;
         }
+
+        positionLetters();
     }
 
     private function drawCombo(idx : Int) {
@@ -199,7 +199,20 @@ class Muffin extends FlxSpriteGroup
         super.kill();
 
         for (combo in combos) {
-//            combo.letter.kill();
+            combo.letter.kill();
+        }
+    }
+
+    public function positionLetters() {
+        if (combos.length == 1) {
+            combos[0].letter.x = baseSprites.mid_right.x - 5;
+        } else if (combos.length == 2) {
+            combos[0].letter.x = baseSprites.mid_left.x - 5;
+            combos[1].letter.x = baseSprites.right.x - 3;
+        } else if (combos.length == 3) {
+            combos[0].letter.x = baseSprites.left.x + 22;
+            combos[1].letter.x = baseSprites.mid_right.x - 5;
+            combos[2].letter.x = baseSprites.right.x + 5;
         }
     }
 
@@ -207,9 +220,7 @@ class Muffin extends FlxSpriteGroup
 	{
 		super.update(elapsed);
 
-        for (combo in combos) {
-//            combo.letter.x = x + combo.x + colorWidth / 2 - 8;
-        }
+        positionLetters();
 
         if (selected) {
             if (FlxG.keys.justPressed.A) {

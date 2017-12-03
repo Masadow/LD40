@@ -19,10 +19,10 @@ class UI extends FlxGroup {
 
         addBackground();
 
-        addAction(145, 20, "A");
-        addAction(310, 20, "S");
-        addAction(470, 20, "D");
-        addAction(630, 20, "F");
+        addAction(140, 20, "A");
+        addAction(305, 20, "S");
+        addAction(465, 20, "D");
+        addAction(625, 20, "F");
 
         UI.score = 0;
         addScore();
@@ -43,13 +43,13 @@ class UI extends FlxGroup {
     private function addAction(x : Float, y : Float, letter : String) : Void {
         var txt = new FlxText(x, y, 60, letter);
         txt.color = FlxColor.WHITE;
-        txt.size = 36;
+        txt.size = 20;
         add(txt);
     }
 
     function addScore() {
         scoreTxt = new FlxText(FlxG.width - 380, 42, 310, "0");
-        scoreTxt.size = 32;
+        scoreTxt.size = 20;
         scoreTxt.alignment = FlxTextAlign.RIGHT;
         add(scoreTxt);
     }
