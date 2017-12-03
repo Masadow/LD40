@@ -6,9 +6,6 @@ import flixel.input.keyboard.FlxKey;
 import flixel.FlxG;
 import entities.UI;
 import flixel.text.FlxText;
-import states.PlayState;
-import flixel.math.FlxPoint;
-import flixel.group.FlxGroup;
 
 typedef ComboState = {
     letter: FlxText,
@@ -42,18 +39,18 @@ class Muffin extends FlxSpriteGroup
 
         //Build the muffin from bottom to top
         selected = false;
-        selectorSprite = new FlxSprite(5, 110, "assets/images/unselected.png");
+        selectorSprite = new FlxSprite(5, 110, "assets/images/muffin/unselected.png");
 
         var baseOffsetX = 15;
         var baseOffsetY = 90;
         baseSprites = {
-            left: new FlxSprite(-2 + baseOffsetX, 0 + baseOffsetY, "assets/images/base/left_white.png"),
-            mid_left: new FlxSprite(37 + baseOffsetX, 0 + baseOffsetY, "assets/images/base/mid_left_white.png"),
-            mid_right: new FlxSprite(52 + baseOffsetX, 1 + baseOffsetY, "assets/images/base/mid_right_white.png"),
-            right: new FlxSprite(66 + baseOffsetX, 0 + baseOffsetY, "assets/images/base/right_white.png")
+            left: new FlxSprite(-2 + baseOffsetX, 0 + baseOffsetY, "assets/images/muffin/base/left_white.png"),
+            mid_left: new FlxSprite(37 + baseOffsetX, 0 + baseOffsetY, "assets/images/muffin/base/mid_left_white.png"),
+            mid_right: new FlxSprite(52 + baseOffsetX, 1 + baseOffsetY, "assets/images/muffin/base/mid_right_white.png"),
+            right: new FlxSprite(66 + baseOffsetX, 0 + baseOffsetY, "assets/images/muffin/base/right_white.png")
         };
 
-        headSprite = new FlxSprite(0, 0, "assets/images/head.png");
+        headSprite = new FlxSprite(0, 0, "assets/images/muffin/head.png");
         letters = [
             new FlxText(0, 103, 40, "A\n ", 12),
             new FlxText(0, 103, 40, "S\n ", 12),
@@ -113,20 +110,20 @@ class Muffin extends FlxSpriteGroup
 
         this.combos = new Array<ComboState>();
         if (combos.length == 1) {
-            baseSprites.left.loadGraphic("assets/images/base/left_"+ get_combo_color(combos[0]) +".png");
-            baseSprites.mid_left.loadGraphic("assets/images/base/mid_left_"+ get_combo_color(combos[0]) +".png");
-            baseSprites.mid_right.loadGraphic("assets/images/base/mid_right_"+ get_combo_color(combos[0]) +".png");
-            baseSprites.right.loadGraphic("assets/images/base/right_"+ get_combo_color(combos[0]) +".png");
+            baseSprites.left.loadGraphic("assets/images/muffin/base/left_"+ get_combo_color(combos[0]) +".png");
+            baseSprites.mid_left.loadGraphic("assets/images/muffin/base/mid_left_"+ get_combo_color(combos[0]) +".png");
+            baseSprites.mid_right.loadGraphic("assets/images/muffin/base/mid_right_"+ get_combo_color(combos[0]) +".png");
+            baseSprites.right.loadGraphic("assets/images/muffin/base/right_"+ get_combo_color(combos[0]) +".png");
         } else if (combos.length == 2) {
-            baseSprites.left.loadGraphic("assets/images/base/left_"+ get_combo_color(combos[0]) +".png");
-            baseSprites.mid_left.loadGraphic("assets/images/base/mid_left_"+ get_combo_color(combos[0]) +".png");
-            baseSprites.mid_right.loadGraphic("assets/images/base/mid_right_"+ get_combo_color(combos[1]) +".png");
-            baseSprites.right.loadGraphic("assets/images/base/right_"+ get_combo_color(combos[1]) +".png");
+            baseSprites.left.loadGraphic("assets/images/muffin/base/left_"+ get_combo_color(combos[0]) +".png");
+            baseSprites.mid_left.loadGraphic("assets/images/muffin/base/mid_left_"+ get_combo_color(combos[0]) +".png");
+            baseSprites.mid_right.loadGraphic("assets/images/muffin/base/mid_right_"+ get_combo_color(combos[1]) +".png");
+            baseSprites.right.loadGraphic("assets/images/muffin/base/right_"+ get_combo_color(combos[1]) +".png");
         } else if (combos.length == 3) {
-            baseSprites.left.loadGraphic("assets/images/base/left_"+ get_combo_color(combos[0]) +".png");
-            baseSprites.mid_left.loadGraphic("assets/images/base/mid_left_"+ get_combo_color(combos[1]) +".png");
-            baseSprites.mid_right.loadGraphic("assets/images/base/mid_right_"+ get_combo_color(combos[1]) +".png");
-            baseSprites.right.loadGraphic("assets/images/base/right_"+ get_combo_color(combos[2]) +".png");
+            baseSprites.left.loadGraphic("assets/images/muffin/base/left_"+ get_combo_color(combos[0]) +".png");
+            baseSprites.mid_left.loadGraphic("assets/images/muffin/base/mid_left_"+ get_combo_color(combos[1]) +".png");
+            baseSprites.mid_right.loadGraphic("assets/images/muffin/base/mid_right_"+ get_combo_color(combos[1]) +".png");
+            baseSprites.right.loadGraphic("assets/images/muffin/base/right_"+ get_combo_color(combos[2]) +".png");
         }
  
         var x = 0.;
@@ -155,26 +152,26 @@ class Muffin extends FlxSpriteGroup
 
     private function drawCombo(idx : Int) {
         if (combos.length == 1) {
-            baseSprites.left.loadGraphic("assets/images/base/left_white.png");
-            baseSprites.mid_left.loadGraphic("assets/images/base/mid_left_white.png");
-            baseSprites.mid_right.loadGraphic("assets/images/base/mid_right_white.png");
-            baseSprites.right.loadGraphic("assets/images/base/right_white.png");
+            baseSprites.left.loadGraphic("assets/images/muffin/base/left_white.png");
+            baseSprites.mid_left.loadGraphic("assets/images/muffin/base/mid_left_white.png");
+            baseSprites.mid_right.loadGraphic("assets/images/muffin/base/mid_right_white.png");
+            baseSprites.right.loadGraphic("assets/images/muffin/base/right_white.png");
         } else if (combos.length == 2) {
             if (idx == 0) {
-                baseSprites.left.loadGraphic("assets/images/base/left_white.png");
-                baseSprites.mid_left.loadGraphic("assets/images/base/mid_left_white.png");
+                baseSprites.left.loadGraphic("assets/images/muffin/base/left_white.png");
+                baseSprites.mid_left.loadGraphic("assets/images/muffin/base/mid_left_white.png");
             } else {
-                baseSprites.mid_right.loadGraphic("assets/images/base/mid_right_white.png");
-                baseSprites.right.loadGraphic("assets/images/base/right_white.png");
+                baseSprites.mid_right.loadGraphic("assets/images/muffin/base/mid_right_white.png");
+                baseSprites.right.loadGraphic("assets/images/muffin/base/right_white.png");
             }
         } else if (combos.length == 3) {
             if (idx == 0) {
-                baseSprites.left.loadGraphic("assets/images/base/left_white.png");
+                baseSprites.left.loadGraphic("assets/images/muffin/base/left_white.png");
             } else if (idx == 1) {
-                baseSprites.mid_left.loadGraphic("assets/images/base/mid_left_white.png");
-                baseSprites.mid_right.loadGraphic("assets/images/base/mid_right_white.png");
+                baseSprites.mid_left.loadGraphic("assets/images/muffin/base/mid_left_white.png");
+                baseSprites.mid_right.loadGraphic("assets/images/muffin/base/mid_right_white.png");
             } else {
-                baseSprites.right.loadGraphic("assets/images/base/right_white.png");
+                baseSprites.right.loadGraphic("assets/images/muffin/base/right_white.png");
             }
         }
     }
@@ -220,8 +217,6 @@ class Muffin extends FlxSpriteGroup
 	{
 		super.update(elapsed);
 
-//        positionLetters();
-
         if (selected) {
             if (FlxG.keys.justPressed.A) {
                 hitCombo(FlxKey.A);
@@ -240,11 +235,13 @@ class Muffin extends FlxSpriteGroup
 
     public function select() {
         selected = true;
-        selectorSprite.loadGraphic("assets/images/selected.png");
+        selectorSprite.loadGraphic("assets/images/muffin/selected.png");
+        headSprite.loadGraphic("assets/images/muffin/head_selected.png");
     }
 
     public function unselect() {
         selected = false;
-        selectorSprite.loadGraphic("assets/images/unselected.png");
+        selectorSprite.loadGraphic("assets/images/muffin/unselected.png");
+        headSprite.loadGraphic("assets/images/muffin/head.png");
     }
 }
