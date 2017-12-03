@@ -105,7 +105,6 @@ class Conveyor extends FlxGroup
 
     private function popOnBelt(beltId : Int) : Void {
         var comboSize = randomizer.int(1, maxCombo);
-        comboSize = 3;
         var combo = [FlxKey.A, FlxKey.S, FlxKey.D, FlxKey.F];
         while (comboSize++ < 4) {
             combo.splice(randomizer.int(0, combo.length - 1), 1);
