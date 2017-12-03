@@ -50,7 +50,7 @@ class PlayState extends FlxState
 
 		selector.update(elapsed);
 
-		if (UI.health < 0) {
+		if (UI.health <= 0) {
 			FlxG.switchState(new GameOverState(UI.score));
 			return ;
 		}
