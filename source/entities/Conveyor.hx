@@ -10,8 +10,10 @@ import flixel.FlxBasic;
 
 typedef Belt = {
     y: Float,
-    lastUsed : Float
+    busyTimer : Float,
+    queue : Int
 }
+
 
 class Conveyor extends FlxGroup
 {
@@ -20,7 +22,8 @@ class Conveyor extends FlxGroup
     private var randomizer : FlxRandom;
     private var probabilityBoost : Float;
     private var muffins : FlxGroup;
-    private static var SPEED = 100;
+    private static var SPEED = 150;
+    private static var BUSY_TIMEOUT = 1.5;
     private var maxCombo : Int;
     private var y : Float;
     private var height : Float;
@@ -54,7 +57,7 @@ class Conveyor extends FlxGroup
             while (x < FlxG.width) {
                 var sprite = new FlxSprite(x, y);
                 sprite.loadGraphic("assets/images/belt.png", true, 259, 231);
-                sprite.animation.add("run", [0, 1, 2, 3, 4, 5, 6, 7], 15);
+                sprite.animation.add("run", [0, 1, 2, 3, 4, 5, 6, 7], Math.round(15));
                 sprite.animation.play("run");
                 sprite.x -= (Main.global_scale * sprite.width) / 4;
                 sprite.y -= (Main.global_scale * sprite.height) / 4;
@@ -68,14 +71,15 @@ class Conveyor extends FlxGroup
 
             belts.push({
                 y: y - 10,
-                lastUsed: -5
+                busyTimer: 0,
+                queue: 0
             });
         }
 
         height = y - this.y;
     }
 
-    public function popMuffin() : Void {
+    private function popOnBelt(beltId : Int) : Void {
         var comboSize = randomizer.int(1, maxCombo);
         var combo = [FlxKey.A, FlxKey.S, FlxKey.D, FlxKey.F];
         while (comboSize++ < 4) {
@@ -83,8 +87,12 @@ class Conveyor extends FlxGroup
         }
         randomizer.shuffle(combo);
         var m : Muffin = cast muffins.recycle(Muffin);
-        m.init(belts[randomizer.int(0, 2)].y - Muffin.BASE_HEIGHT, SPEED, combo, popMuffin);
+        m.init(belts[beltId].y - Muffin.BASE_HEIGHT, SPEED, combo, popMuffin);
         muffins.add(m);
+    }
+
+    public function popMuffin() : Void {
+        belts[randomizer.int(0, 2)].queue++;
     }
 
     public function popMuffins() : Void {
@@ -139,6 +147,17 @@ class Conveyor extends FlxGroup
             maxCombo = 3;
         } else if (elapsedTotal > 10) {
             maxCombo = 2;
+        }
+
+        var beltIdx = 0;
+        for (belt in belts) {
+            belt.busyTimer = Math.max(0, belt.busyTimer - elapsed);
+            if (belt.queue > 0 && belt.busyTimer == 0) {
+                belt.queue--;
+                belt.busyTimer = BUSY_TIMEOUT;
+                popOnBelt(beltIdx);
+            }
+            ++beltIdx;
         }
 
         checkMuffins();
