@@ -41,14 +41,14 @@ class UI extends FlxGroup {
     }
 
     private function addAction(x : Float, y : Float, letter : String) : Void {
-        var txt = new FlxText(x, y, 60, letter);
+        var txt = new FlxText(x, y, 60, letter + "\n ");
         txt.color = FlxColor.WHITE;
         txt.size = 20;
         add(txt);
     }
 
     function addScore() {
-        scoreTxt = new FlxText(FlxG.width - 380, 42, 310, "0");
+        scoreTxt = new FlxText(FlxG.width - 380, 42, 310, "0" + "\n ");
         scoreTxt.size = 20;
         scoreTxt.alignment = FlxTextAlign.RIGHT;
         add(scoreTxt);
@@ -68,7 +68,7 @@ class UI extends FlxGroup {
     public override function update(elapsed:Float) {
         super.update(elapsed);
 
-        scoreTxt.text = "" + score;
+        scoreTxt.text = "" + score + "\n ";
 
         var i = 0;
         for (healthPoint in healthPoints) {
@@ -79,6 +79,5 @@ class UI extends FlxGroup {
                 }
             }
         }
-//        healthTxt.text = "Life: " + health;
     }
 }

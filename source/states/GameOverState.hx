@@ -21,14 +21,14 @@ class GameOverState extends FlxState
 		super.create();
 
         var title = new FlxText();
-        title.text = "GAME OVER !";
+        title.text = "GAME OVER !\n ";
         title.size = 64;
         title.screenCenter();
         title.y -= 130;
         add(title);
 
         var score = new FlxText();
-        score.text = "SCORE " + this.score;
+        score.text = "SCORE " + this.score + "\n ";
         score.size = 48;
         score.screenCenter();
         add(score);
@@ -43,7 +43,7 @@ class GameOverState extends FlxState
     */
 
         var replay = new FlxButton();
-        replay.text = "REPLAY";
+        replay.text = "REPLAY\n ";
         replay.onUp.callback = function () {
             FlxG.switchState(new PlayState());
         };

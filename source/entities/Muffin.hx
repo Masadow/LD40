@@ -133,7 +133,7 @@ class Muffin extends FlxSpriteGroup
             }
             var letter : FlxText = cast PlayState.letters.recycle(FlxText);
             letter.y = y + 103;
-            letter.text = sletter;
+            letter.text = sletter + "\n ";
             letter.size = 12;
             this.combos.push({
                 letter: letter,

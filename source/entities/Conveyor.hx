@@ -11,7 +11,8 @@ import flixel.FlxBasic;
 typedef Belt = {
     y: Float,
     busyTimer : Float,
-    queue : Int
+    queue : Int,
+    muffins: FlxGroup
 }
 
 
@@ -21,7 +22,6 @@ class Conveyor extends FlxGroup
     private var lastPopped : Float;
     private var randomizer : FlxRandom;
     private var probabilityBoost : Float;
-    private var muffins : FlxGroup;
     private static var SPEED = 150;
     private static var BUSY_TIMEOUT = 1.5;
     private var maxCombo : Int;
@@ -29,7 +29,7 @@ class Conveyor extends FlxGroup
     private var height : Float;
     private var belts : Array<Belt>;
 
-	public function new(?Y:Float = 0, muffins : FlxGroup)
+	public function new(?Y:Float = 0)
 	{
         super();
         y = Y;
@@ -41,7 +41,6 @@ class Conveyor extends FlxGroup
         randomizer = new FlxRandom();
         probabilityBoost = 0;
         maxCombo = 1;
-        this.muffins = muffins;
         popMuffin();
 	}
 
@@ -84,8 +83,13 @@ class Conveyor extends FlxGroup
             belts.push({
                 y: y - 10,
                 busyTimer: 0,
-                queue: 0
+                queue: 0,
+                muffins: new FlxGroup()
             });
+        }
+
+        for (belt in belts) {
+            add(belt.muffins); //Ensure correct draw order
         }
 
         height = y - this.y;
@@ -98,9 +102,9 @@ class Conveyor extends FlxGroup
             combo.splice(randomizer.int(0, combo.length - 1), 1);
         }
         randomizer.shuffle(combo);
-        var m : Muffin = cast muffins.recycle(Muffin);
+        var m : Muffin = cast belts[beltId].muffins.recycle(Muffin);
         m.init(belts[beltId].y - Muffin.BASE_HEIGHT, SPEED, combo, popMuffin);
-        muffins.add(m);
+//        belts[beltId].muffins.add(m);
     }
 
     public function popMuffin() : Void {
@@ -121,7 +125,11 @@ class Conveyor extends FlxGroup
             c++;
         }
 
-        c = c == 0 && muffins.countLiving() == 0 ? 1 : c;
+        var living : Int = 0; 
+        for (belt in belts) {
+            living += belt.muffins.countLiving();
+        }
+        c = c == 0 && living == 0 ? 1 : c;
 
 //        probabilityBoost = c == 0 ? probabilityBoost + 5 : 0;
 
@@ -132,15 +140,25 @@ class Conveyor extends FlxGroup
 
     private function checkMuffins() : Void
     {
-        muffins.forEachAlive(function (basic_muffin : FlxBasic) {
-            var muffin : Muffin = cast basic_muffin;
+        for (belt in belts) {
+            belt.muffins.forEachAlive(function (basic_muffin : FlxBasic) {
+                var muffin : Muffin = cast basic_muffin;
 
-            if (muffin.x > FlxG.width) {
-                muffin.alive = false;
-                muffin.velocity.x = 0;
-                UI.health -= 1;
-            }
-        });
+                if (muffin.x > FlxG.width) {
+                    muffin.alive = false;
+                    muffin.velocity.x = 0;
+                    UI.health -= 1;
+                }
+            });
+        }
+    }
+
+    public function forEachMuffin(callback : Muffin -> Void) {
+        for (belt in belts) {
+            belt.muffins.forEachAlive(function (basic : FlxBasic) {
+		        callback(cast basic);
+            });
+        }
     }
 
 	override public function update(elapsed:Float):Void

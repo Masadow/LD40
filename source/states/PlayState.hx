@@ -13,7 +13,6 @@ import entities.Background;
 
 class PlayState extends FlxState
 {
-	public var muffins : FlxGroup;
 	public var conveyor : Conveyor;
 	public var selector : Selector;
 	public var ui : UI;
@@ -25,20 +24,16 @@ class PlayState extends FlxState
 
 		ui = new UI();
 		letters = new FlxGroup();
-		muffins = new FlxGroup();
-		conveyor = new Conveyor(180, muffins);
 		selector = new Selector();
+		conveyor = new Conveyor(180);
 
 		add(new Background());
 		add(conveyor);
-		add(muffins);
 		add(letters);
 		add(ui);
 	}
 
-	public function hasFoundSelection(basic_muffin : FlxBasic) {
-		var muffin : Muffin = cast(basic_muffin);
-
+	public function hasFoundSelection(muffin : Muffin) {
 		if (FlxG.mouse.overlaps(muffin)) {
 			selector.select(muffin);
 		}
@@ -56,7 +51,7 @@ class PlayState extends FlxState
 		}
 
 		if (FlxG.mouse.justPressed) {
-			muffins.forEachAlive(hasFoundSelection);
+			conveyor.forEachMuffin(hasFoundSelection);
 		}
 	}
 }
