@@ -12,7 +12,8 @@ typedef Belt = {
     y: Float,
     busyTimer : Float,
     queue : Int,
-    muffins: FlxGroup
+    muffins: FlxGroup,
+    edge: FlxSprite
 }
 
 
@@ -54,7 +55,7 @@ class Conveyor extends FlxGroup
         // Position shadow
         x = 0;
         while (x < FlxG.width) {
-            var sprite = new FlxSprite(x, 513, "assets/images/belt_shadow.png");
+            var sprite = new FlxSprite(x, 513, "assets/images/conveyor/belt_shadow.png");
             sprite.x -= (Main.global_scale * sprite.width) / 4;
             sprite.y -= (Main.global_scale * sprite.height) / 4;
             sprite.scale.set(Main.global_scale, Main.global_scale);
@@ -67,7 +68,7 @@ class Conveyor extends FlxGroup
             x = 0;
             while (x < FlxG.width) {
                 var sprite = new FlxSprite(x, y);
-                sprite.loadGraphic("assets/images/belt.png", true, 259, 231);
+                sprite.loadGraphic("assets/images/conveyor/belt.png", true, 259, 231);
                 sprite.animation.add("run", [0, 1, 2, 3, 4, 5, 6, 7], Math.round(15));
                 sprite.animation.play("run");
                 sprite.x -= (Main.global_scale * sprite.width) / 4;
@@ -78,18 +79,25 @@ class Conveyor extends FlxGroup
                 add(sprite);
             }
 
+            var edge = new FlxSprite(FlxG.width - 100 - i * 10, y - 40, "assets/images/conveyor/edge.png");
+            edge.x -= (Main.global_scale * edge.width) / 4;
+            edge.y -= (Main.global_scale * edge.height) / 4;
+            edge.scale.set(Main.global_scale, Main.global_scale);
+
             y += y_incr - 30;
 
             belts.push({
                 y: y - 10,
                 busyTimer: 0,
                 queue: 0,
-                muffins: new FlxGroup()
+                muffins: new FlxGroup(),
+                edge: edge
             });
         }
 
         for (belt in belts) {
             add(belt.muffins); //Ensure correct draw order
+            add(belt.edge);
         }
 
         height = y - this.y;
@@ -143,7 +151,7 @@ class Conveyor extends FlxGroup
             belt.muffins.forEachAlive(function (basic_muffin : FlxBasic) {
                 var muffin : Muffin = cast basic_muffin;
 
-                if (muffin.x > FlxG.width) {
+                if (muffin.x > belt.edge.x + 30) {
                     muffin.alive = false;
                     muffin.velocity.x = 0;
                     UI.health -= 1;

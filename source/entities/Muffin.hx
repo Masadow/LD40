@@ -38,9 +38,6 @@ class Muffin extends FlxSpriteGroup
 	{
 		super(0, 0);
 
-        this.width = 20;
-        this.height = 220 * Main.global_scale;
-
         //Build the muffin from bottom to top
         selected = false;
         selectorSprite = new FlxSprite(5, 110, "assets/images/unselected.png");
