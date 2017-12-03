@@ -19,6 +19,8 @@ class WelcomeState extends FlxState
 	{
 		super.create();
 
+        FlxG.sound.playMusic("assets/music/main.ogg", 1, true);
+
         var bg = new FlxSprite(0, 0, "assets/images/welcome/bg.png");
         bg.x = - (Main.global_scale * bg.width) / 4;
         bg.y = - (Main.global_scale * bg.height) / 4;
