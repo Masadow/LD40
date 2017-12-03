@@ -46,7 +46,7 @@ class Conveyor extends FlxGroup
             x = 0;
             while (x < FlxG.width) {
                 var sprite = new FlxSprite(x, y);
-                sprite.loadGraphic("assets/images/belt2.png", true, 259, 231);
+                sprite.loadGraphic("assets/images/belt.png", true, 259, 231);
                 sprite.animation.add("run", [0, 1, 2, 3, 4, 5, 6, 7], 15);
                 sprite.animation.play("run");
                 sprite.x -= (Main.global_scale * sprite.width) / 4;
