@@ -93,7 +93,7 @@ class Muffin extends FlxSpriteGroup
     }
 
     public function init(Y:Float, speed:Float, combos:Array<FlxKey>, onMistake : Void -> Void) : Void {
-        x = 0;
+        x = -width;
         y = Y;
 
         this.onMistake = onMistake;
