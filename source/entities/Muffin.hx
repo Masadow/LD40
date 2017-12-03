@@ -30,6 +30,7 @@ class Muffin extends FlxSpriteGroup
     private var selectorSprite : FlxSprite;
     private var baseSprites : BaseSprites;
     private var letters : Array<FlxText>;
+    private var toppins : Array<FlxSprite>;
 
     private var selected : Bool;
 
@@ -67,6 +68,12 @@ class Muffin extends FlxSpriteGroup
             new FlxText(0, 103, 40, "F\n ", 12)
         ];
 
+        toppins = [
+            new FlxSprite(10, -40),
+            new FlxSprite(0, -65),
+            new FlxSprite(-5, -80),
+        ];
+
         add(selectorSprite);
         add(baseSprites.left);
         add(baseSprites.mid_left);
@@ -77,6 +84,18 @@ class Muffin extends FlxSpriteGroup
             letter.alpha = 0;
             add(letter);
         }
+        var scaleMultiplier = 1.;
+        for (toppin in toppins) {
+            toppin.loadGraphic("assets/images/muffin/topping.png", true, 169, 109);
+            toppin.animation.add("run", [4, 6, 8, 1, 5, 9, 12, 13, 2, 0, 10, 14, 16, 17, 18, 20, 21, 22, 3], 15, false);
+            toppin.animation.add("idle", [7], 1, false);
+            toppin.animation.play("idle");
+
+            add(toppin);
+
+            reposition_sprite(toppin, scaleMultiplier);
+            scaleMultiplier *= 0.75;
+        }
 
         reposition_sprite(selectorSprite);
         reposition_sprite(baseSprites.left);
@@ -86,10 +105,11 @@ class Muffin extends FlxSpriteGroup
         reposition_sprite(headSprite);
 	}
 
-    private function reposition_sprite(sprite : FlxSprite) {
-        sprite.scale.set(Main.global_scale, Main.global_scale);
-        sprite.x -= (Main.global_scale * sprite.width) / 4;
-        sprite.y -= (Main.global_scale * sprite.height) / 4;
+    private function reposition_sprite(sprite : FlxSprite, scaleModifier : Float = 1.) {
+        var scale = Main.global_scale * scaleModifier;
+        sprite.scale.set(scale, scale);
+        sprite.x -= (scale * sprite.width) / 4;
+        sprite.y -= (scale * sprite.height) / 4;
     }
 
     private function get_combo_color(combo : FlxKey) : String {
@@ -109,8 +129,14 @@ class Muffin extends FlxSpriteGroup
         x = -130;
         y = Y;
 
+        velocity.y = 0;
+
         for (letter in letters) {
             letter.alpha = 0;
+        }
+
+        for (toppin in toppins) {
+            toppin.animation.play("idle");
         }
 
         this.onMistake = onMistake;
@@ -160,6 +186,7 @@ class Muffin extends FlxSpriteGroup
     }
 
     private function drawCombo(idx : Int) {
+        toppins[idx].animation.play("run");
         if (combos.length == 1) {
             baseSprites.left.loadGraphic("assets/images/muffin/base/left_white.png");
             baseSprites.mid_left.loadGraphic("assets/images/muffin/base/mid_left_white.png");
@@ -202,7 +229,8 @@ class Muffin extends FlxSpriteGroup
         }
         UI.score += [10, 50, 100, 250][combos.length - 1];
         unselect();
-        kill();
+        velocity.y = -3 * velocity.x;
+        velocity.x = 0;
     }
 
     override public function kill():Void {
@@ -226,7 +254,9 @@ class Muffin extends FlxSpriteGroup
 	{
 		super.update(elapsed);
 
-        if (selected) {
+        if (y + 150 < 0) {
+            kill();
+        } else if (selected) {
             if (FlxG.keys.justPressed.A) {
                 hitCombo(FlxKey.A);
             }

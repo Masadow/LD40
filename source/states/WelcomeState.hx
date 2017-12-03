@@ -39,7 +39,6 @@ class WelcomeState extends FlxState
         arrow.alpha = 0;
         arrow.scale.set(Main.global_scale, Main.global_scale);
         add(arrow);
-
 	}
 
 	override public function update(elapsed:Float):Void
