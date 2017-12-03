@@ -179,6 +179,7 @@ class Muffin extends FlxSpriteGroup
         var i = 0;
         for (combo in combos) {
             if (combo.done) {
+                ++i;
                 continue;
             }
             if (combo.key == key) {
@@ -188,7 +189,6 @@ class Muffin extends FlxSpriteGroup
                 this.onMistake();
                 return ;
             }
-            ++i;
         }
         UI.score += [10, 50, 100, 250][combos.length - 1];
         unselect();
