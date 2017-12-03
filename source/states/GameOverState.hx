@@ -33,15 +33,6 @@ class GameOverState extends FlxState
         score.screenCenter();
         add(score);
 
-    /*
-        var highscore = new FlxText();
-        highscore.text = "Highscore: " + this.score;
-        highscore.size = 48;
-        highscore.screenCenter();
-        highscore.y += 100;
-        add(highscore);
-    */
-
         var replay = new FlxButton();
         replay.text = "REPLAY\n ";
         replay.onUp.callback = function () {

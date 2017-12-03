@@ -23,7 +23,7 @@ class Conveyor extends FlxGroup
     private var randomizer : FlxRandom;
     private var probabilityBoost : Float;
     private static var SPEED = 150;
-    private static var BUSY_TIMEOUT = 1.5;
+    private static var BUSY_TIMEOUT = 1;
     private var maxCombo : Int;
     private var y : Float;
     private var height : Float;
@@ -104,7 +104,6 @@ class Conveyor extends FlxGroup
         randomizer.shuffle(combo);
         var m : Muffin = cast belts[beltId].muffins.recycle(Muffin);
         m.init(belts[beltId].y - Muffin.BASE_HEIGHT, SPEED, combo, popMuffin);
-//        belts[beltId].muffins.add(m);
     }
 
     public function popMuffin() : Void {
@@ -127,7 +126,7 @@ class Conveyor extends FlxGroup
 
         var living : Int = 0; 
         for (belt in belts) {
-            living += belt.muffins.countLiving();
+            living += cast Math.max(belt.muffins.countLiving(), 0);
         }
         c = c == 0 && living == 0 ? 1 : c;
 

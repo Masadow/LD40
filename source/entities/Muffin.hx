@@ -26,7 +26,6 @@ class Muffin extends FlxSpriteGroup
 {
     public static var BASE_HEIGHT = 150;
     private var combos : Array<ComboState>;
-    private var colorWidth: Float;
     private var onMistake : Void -> Void;
 
     private var headSprite : FlxSprite;
@@ -39,21 +38,20 @@ class Muffin extends FlxSpriteGroup
 	{
 		super(0, 0);
 
-        this.width = 199 * Main.global_scale;
+        this.width = 20;
         this.height = 220 * Main.global_scale;
-        this._halfSize = FlxPoint.get(this.width / 2, this.height / 2);
 
         //Build the muffin from bottom to top
         selected = false;
         selectorSprite = new FlxSprite(5, 110, "assets/images/unselected.png");
 
-        var baseOffsetX = 22;
+        var baseOffsetX = 15;
         var baseOffsetY = 90;
         baseSprites = {
-            left: new FlxSprite(0 + baseOffsetX, 0 + baseOffsetY, "assets/images/base/left_white.png"),
-            mid_left: new FlxSprite(30 + baseOffsetX, 0 + baseOffsetY, "assets/images/base/mid_left_white.png"),
-            mid_right: new FlxSprite(45 + baseOffsetX, 1 + baseOffsetY, "assets/images/base/mid_right_white.png"),
-            right: new FlxSprite(59 + baseOffsetX, 1 + baseOffsetY, "assets/images/base/right_white.png")
+            left: new FlxSprite(-2 + baseOffsetX, 0 + baseOffsetY, "assets/images/base/left_white.png"),
+            mid_left: new FlxSprite(37 + baseOffsetX, 0 + baseOffsetY, "assets/images/base/mid_left_white.png"),
+            mid_right: new FlxSprite(52 + baseOffsetX, 1 + baseOffsetY, "assets/images/base/mid_right_white.png"),
+            right: new FlxSprite(66 + baseOffsetX, 0 + baseOffsetY, "assets/images/base/right_white.png")
         };
 
         headSprite = new FlxSprite(0, 0, "assets/images/head.png");
@@ -93,7 +91,7 @@ class Muffin extends FlxSpriteGroup
     }
 
     public function init(Y:Float, speed:Float, combos:Array<FlxKey>, onMistake : Void -> Void) : Void {
-        x = -width;
+        x = -130;
         y = Y;
 
         this.onMistake = onMistake;
@@ -118,7 +116,6 @@ class Muffin extends FlxSpriteGroup
             baseSprites.right.loadGraphic("assets/images/base/right_"+ get_combo_color(combos[2]) +".png");
         }
  
-        colorWidth = width / combos.length;
         var x = 0.;
         for (combo in combos) {
             var sletter = "";
@@ -169,10 +166,6 @@ class Muffin extends FlxSpriteGroup
                 baseSprites.right.loadGraphic("assets/images/base/right_white.png");
             }
         }
- 
-//        for (combo)
-        // Visually mark a combo as done
-//        FlxSpriteUtil.drawRect(this, x, 0, colorWidth, height, FlxColor.WHITE);
     }
 
     private function hitCombo(key:FlxKey) {
@@ -207,12 +200,12 @@ class Muffin extends FlxSpriteGroup
         if (combos.length == 1) {
             combos[0].letter.x = baseSprites.mid_right.x - 5;
         } else if (combos.length == 2) {
-            combos[0].letter.x = baseSprites.mid_left.x - 5;
-            combos[1].letter.x = baseSprites.right.x - 3;
+            combos[0].letter.x = baseSprites.mid_left.x - 8;
+            combos[1].letter.x = baseSprites.right.x;
         } else if (combos.length == 3) {
-            combos[0].letter.x = baseSprites.left.x + 22;
-            combos[1].letter.x = baseSprites.mid_right.x - 5;
-            combos[2].letter.x = baseSprites.right.x + 5;
+            combos[0].letter.x = baseSprites.left.x + 30;
+            combos[1].letter.x = baseSprites.mid_right.x - 8;
+            combos[2].letter.x = baseSprites.right.x + 8;
         }
     }
 
