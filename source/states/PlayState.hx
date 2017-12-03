@@ -32,7 +32,6 @@ class PlayState extends FlxState
 		add(new Background());
 		add(conveyor);
 		add(muffins);
-		add(selector);
 		add(letters);
 		add(ui);
 	}
@@ -48,6 +47,8 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+
+		selector.update(elapsed);
 
 		if (UI.health == 0) {
 			FlxG.switchState(new GameOverState(UI.score));

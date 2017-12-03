@@ -29,7 +29,6 @@ typedef BaseSprites = {
 class Muffin extends FlxSpriteGroup
 {
     public static var BASE_HEIGHT = 150;
-    public var selector : Selector;
     private var combos : Array<ComboState>;
     private var colorWidth: Float;
     private var onMistake : Void -> Void;
@@ -37,6 +36,8 @@ class Muffin extends FlxSpriteGroup
     private var headSprite : FlxSprite;
     private var selectorSprite : FlxSprite;
     private var baseSprites : BaseSprites;
+
+    private var selected : Bool;
 
 	public function new()
 	{
@@ -47,22 +48,8 @@ class Muffin extends FlxSpriteGroup
         this._halfSize = FlxPoint.get(this.width / 2, this.height / 2);
 
         //Build the muffin from bottom to top
-        /*
-        selectorSprite = new FlxSprite(10, 160, "assets/images/unselected.png");
-
-
-        var baseOffsetX = 32;
-        var baseOffsetY = 135;
-        baseSprites = {
-            left: new FlxSprite(0 + baseOffsetX, 0 + baseOffsetY, "assets/images/base_1.png"),
-            mid_left: new FlxSprite(49 + baseOffsetX, 0 + baseOffsetY, "assets/images/base_2.png"),
-            mid_right: new FlxSprite(72 + baseOffsetX, 1 + baseOffsetY, "assets/images/base_3.png"),
-            right: new FlxSprite(94 + baseOffsetX, 1 + baseOffsetY, "assets/images/base_4.png")
-        };
-        */
-
+        selected = false;
         selectorSprite = new FlxSprite(5, 110, "assets/images/unselected.png");
-
 
         var baseOffsetX = 22;
         var baseOffsetY = 90;
@@ -89,7 +76,6 @@ class Muffin extends FlxSpriteGroup
         reposition_sprite(baseSprites.right);
         reposition_sprite(headSprite);
 	}
-
 
     private function reposition_sprite(sprite : FlxSprite) {
         sprite.scale.set(Main.global_scale, Main.global_scale);
@@ -182,10 +168,7 @@ class Muffin extends FlxSpriteGroup
             combo.letter.x = x + combo.x + colorWidth / 2 - 8;
         }
 
-        if (selector != null) {
-            selector.x = x;
-            selector.y = y;
-
+        if (selected) {
             if (FlxG.keys.justPressed.A) {
                 hitCombo(FlxKey.A);
             }
@@ -201,11 +184,13 @@ class Muffin extends FlxSpriteGroup
         }
 	}
 
-    public function select(selector : Selector) {
-        this.selector = selector;
+    public function select() {
+        selected = true;
+        selectorSprite.loadGraphic("assets/images/selected.png");
     }
 
     public function unselect() {
-        selector = null;
+        selected = false;
+        selectorSprite.loadGraphic("assets/images/unselected.png");
     }
 }
