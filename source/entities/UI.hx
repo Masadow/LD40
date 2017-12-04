@@ -5,6 +5,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import states.PlayState;
 
 class UI extends FlxGroup {
 
@@ -19,10 +20,10 @@ class UI extends FlxGroup {
 
         addBackground();
 
-        addAction(140, 20, "A");
-        addAction(305, 20, "S");
-        addAction(465, 20, "D");
-        addAction(625, 20, "F");
+        addAction(140, 15, String.fromCharCode(PlayState.A_KEY));
+        addAction(305, 15, String.fromCharCode(PlayState.S_KEY));
+        addAction(465, 15, String.fromCharCode(PlayState.D_KEY));
+        addAction(625, 15, String.fromCharCode(PlayState.F_KEY));
 
         UI.score = 0;
         addScore();
@@ -43,13 +44,13 @@ class UI extends FlxGroup {
     private function addAction(x : Float, y : Float, letter : String) : Void {
         var txt = new FlxText(x, y, 60, letter + "\n ");
         txt.color = FlxColor.WHITE;
-        txt.size = 20;
+        txt.size = 42;
         add(txt);
     }
 
     function addScore() {
-        scoreTxt = new FlxText(FlxG.width - 380, 42, 310, "0" + "\n ");
-        scoreTxt.size = 20;
+        scoreTxt = new FlxText(FlxG.width - 380, 37, 310, "0" + "\n ");
+        scoreTxt.size = 42;
         scoreTxt.alignment = FlxTextAlign.RIGHT;
         add(scoreTxt);
     }

@@ -5,7 +5,7 @@ import flixel.FlxG;
 import flixel.math.FlxRandom;
 import flixel.group.FlxGroup;
 import entities.Muffin;
-import flixel.input.keyboard.FlxKey;
+import states.PlayState;
 import flixel.FlxBasic;
 
 typedef Belt = {
@@ -116,7 +116,7 @@ class Conveyor extends FlxGroup
 
     private function popOnBelt(beltId : Int) : Void {
         var comboSize : Int= cast Math.min(randomizer.weightedPick([60, 30, 10]) + 1, maxCombo);
-        var combo = [FlxKey.A, FlxKey.S, FlxKey.D, FlxKey.F];
+        var combo = [PlayState.A_KEY, PlayState.S_KEY, PlayState.D_KEY, PlayState.F_KEY];
         while (comboSize++ < 4) {
             combo.splice(randomizer.int(0, combo.length - 1), 1);
         }

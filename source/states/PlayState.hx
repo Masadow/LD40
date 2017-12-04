@@ -5,13 +5,18 @@ import entities.Conveyor;
 import entities.Muffin;
 import entities.Selector;
 import entities.UI;
-import flixel.group.FlxGroup;
 import flixel.FlxG;
 import states.GameOverState;
 import entities.Background;
+import flixel.input.keyboard.FlxKey;
 
 class PlayState extends FlxState
 {
+	public static var A_KEY = FlxKey.ONE;
+	public static var S_KEY = FlxKey.TWO;
+	public static var D_KEY = FlxKey.THREE;
+	public static var F_KEY = FlxKey.FOUR;
+
 	public var conveyor : Conveyor;
 	public var selector : Selector;
 	public var ui : UI;

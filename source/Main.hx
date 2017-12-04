@@ -2,7 +2,7 @@ package;
 
 import flixel.FlxGame;
 import openfl.display.Sprite;
-import states.WelcomeState;
+import states.InstructionsState;
 import flixel.system.FlxAssets;
 
 class Main extends Sprite
@@ -12,7 +12,7 @@ class Main extends Sprite
 	public function new()
 	{
 		super();
-		FlxAssets.FONT_DEFAULT = "assets/fonts/jelly_crazies.ttf";
-		addChild(new FlxGame(0, 0, WelcomeState, 1, 60, 60, true, false));
+		FlxAssets.FONT_DEFAULT = "assets/fonts/Vanilla.ttf";
+		addChild(new FlxGame(0, 0, InstructionsState, 1, 60, 60, true, false));
 	}
 }

@@ -6,6 +6,7 @@ import flixel.input.keyboard.FlxKey;
 import flixel.FlxG;
 import entities.UI;
 import flixel.text.FlxText;
+import states.PlayState;
 
 typedef ComboState = {
     letter: FlxText,
@@ -62,10 +63,10 @@ class Muffin extends FlxSpriteGroup
 
         headSprite = new FlxSprite(0, 0, "assets/images/muffin/head.png");
         letters = [
-            new FlxText(0, 103, 40, "A\n ", 12),
-            new FlxText(0, 103, 40, "S\n ", 12),
-            new FlxText(0, 103, 40, "D\n ", 12),
-            new FlxText(0, 103, 40, "F\n ", 12)
+            new FlxText(0, 100, 40, String.fromCharCode(PlayState.A_KEY), 24),
+            new FlxText(0, 100, 40, String.fromCharCode(PlayState.S_KEY), 24),
+            new FlxText(0, 100, 40, String.fromCharCode(PlayState.D_KEY), 24),
+            new FlxText(0, 100, 40, String.fromCharCode(PlayState.F_KEY), 24)
         ];
 
         toppins = [
@@ -113,13 +114,13 @@ class Muffin extends FlxSpriteGroup
     }
 
     private function get_combo_color(combo : FlxKey) : String {
-        if (combo == FlxKey.A) {
+        if (combo == PlayState.A_KEY) {
             return "red";
-        } else if (combo == FlxKey.S) {
+        } else if (combo == PlayState.S_KEY) {
             return "pink";
-        } else if (combo == FlxKey.D) {
+        } else if (combo == PlayState.D_KEY) {
             return "blue";
-        } else if (combo == FlxKey.F) {
+        } else if (combo == PlayState.F_KEY) {
             return "yellow";
         }
         return "";
@@ -164,13 +165,13 @@ class Muffin extends FlxSpriteGroup
         var x = 0.;
         for (combo in combos) {
             var idx = 0;
-            if (combo == FlxKey.A) {
+            if (combo == PlayState.A_KEY) {
                 idx = 0;
-            } else if (combo == FlxKey.S) {
+            } else if (combo == PlayState.S_KEY) {
                 idx = 1;
-            } else if (combo == FlxKey.D) {
+            } else if (combo == PlayState.D_KEY) {
                 idx = 2;
-            } else if (combo == FlxKey.F) {
+            } else if (combo == PlayState.F_KEY) {
                 idx = 3;
             }
             var letter : FlxText = letters[idx];
@@ -257,17 +258,17 @@ class Muffin extends FlxSpriteGroup
         if (y + 150 < 0) {
             kill();
         } else if (selected) {
-            if (FlxG.keys.justPressed.A) {
-                hitCombo(FlxKey.A);
+            if (FlxG.keys.anyJustPressed([PlayState.A_KEY])) {
+                hitCombo(PlayState.A_KEY);
             }
-            if (FlxG.keys.justPressed.S) {
-                hitCombo(FlxKey.S);
+            if (FlxG.keys.anyJustPressed([PlayState.S_KEY])) {
+                hitCombo(PlayState.S_KEY);
             }
-            if (FlxG.keys.justPressed.D) {
-                hitCombo(FlxKey.D);
+            if (FlxG.keys.anyJustPressed([PlayState.D_KEY])) {
+                hitCombo(PlayState.D_KEY);
             }
-            if (FlxG.keys.justPressed.F) {
-                hitCombo(FlxKey.F);
+            if (FlxG.keys.anyJustPressed([PlayState.F_KEY])) {
+                hitCombo(PlayState.F_KEY);
             }
         }
 	}
