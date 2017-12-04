@@ -90,7 +90,11 @@ class GameOverState extends FlxState
             arrow_quit.alpha = 255;
 
             if (FlxG.mouse.justReleased) {
+                #if html5
+                FlxG.switchState(new states.InstructionsState());
+                #else
                 Lib.close();
+                #end
             }
         } else {
             arrow_quit.alpha = 0;
