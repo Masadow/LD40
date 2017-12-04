@@ -80,6 +80,12 @@ class OptionsState extends FlxState
         commands.scale.set(Main.global_scale, Main.global_scale);
         add(commands);
 
+        var help = new FlxSprite(0, 0, "assets/images/screens/control_settings.png");
+        help.x = 580 - (Main.global_scale * help.width) / 4;
+        help.y = 410 - (Main.global_scale * help.height) / 4;
+        help.scale.set(Main.global_scale, Main.global_scale);
+        add(help);
+
         back = new FlxSprite(0, 0, "assets/images/screens/back.png");
         back.x = 1020 - (Main.global_scale * back.width) / 4;
         back.y = 580 - (Main.global_scale * back.height) / 4;

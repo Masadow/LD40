@@ -223,15 +223,24 @@ class Muffin extends FlxSpriteGroup
             if (combo.key == key) {
                 combo.done = true;
                 drawCombo(i);
+                if (i == combos.length - 1) {
+                    FlxG.sound.play(/*FlxG.random.bool() ? */"assets/sounds/right_cream.wav"/* : "assets/sounds/right_cream_yes.wav"*/);
+                } else {
+                    FlxG.sound.play("assets/sounds/combo_cream.wav");
+                }
+                break ;
             } else {
+                FlxG.sound.play("assets/sounds/wrong_cream.wav");
                 this.onMistake();
                 return ;
             }
         }
-        UI.score += [10, 50, 100, 250][combos.length - 1];
-        unselect();
-        velocity.y = -3 * velocity.x;
-        velocity.x = 0;
+        if (i == combos.length - 1) {
+            UI.score += [10, 50, 100, 250][combos.length - 1];
+            unselect();
+            velocity.y = -3 * velocity.x;
+            velocity.x = 0;
+        }
     }
 
     override public function kill():Void {
@@ -274,6 +283,7 @@ class Muffin extends FlxSpriteGroup
 	}
 
     public function select() {
+        FlxG.sound.play("assets/sounds/select_muffin.wav");
         selected = true;
         selectorSprite.loadGraphic("assets/images/muffin/selected.png");
         headSprite.loadGraphic("assets/images/muffin/head_selected.png");
