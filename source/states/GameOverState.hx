@@ -80,7 +80,9 @@ class GameOverState extends FlxState
             arrow_retry.alpha = 255;
 
             if (FlxG.mouse.justReleased) {
-                FlxG.switchState(new PlayState());
+                FlxG.sound.play("assets/sounds/buttonclick.wav", 1, false, null, false, function () {
+                    FlxG.switchState(new PlayState());
+                });
             }
         } else {
             arrow_retry.alpha = 0;
@@ -90,11 +92,13 @@ class GameOverState extends FlxState
             arrow_quit.alpha = 255;
 
             if (FlxG.mouse.justReleased) {
-                #if html5
-                FlxG.switchState(new states.InstructionsState());
-                #else
-                Lib.close();
-                #end
+                FlxG.sound.play("assets/sounds/buttonclick.wav", 1, false, null, false, function () {
+                    #if html5
+                    FlxG.switchState(new states.InstructionsState());
+                    #else
+                    Lib.close();
+                    #end
+                });
             }
         } else {
             arrow_quit.alpha = 0;

@@ -70,21 +70,27 @@ class WelcomeState extends FlxState
             arrow.y = play.y;
 
             if (FlxG.mouse.justReleased) {
-                FlxG.switchState(new PlayState());
+                FlxG.sound.play("assets/sounds/buttonclick.wav", 1, false, null, false, function () {
+                    FlxG.switchState(new PlayState());
+                });
             }
         } else if (FlxG.mouse.overlaps(options)) {
             arrow.alpha = 255;
             arrow.y = options.y;
 
             if (FlxG.mouse.justReleased) {
-                FlxG.switchState(new OptionsState());
+                FlxG.sound.play("assets/sounds/buttonclick.wav", 1, false, null, false, function () {
+                    FlxG.switchState(new OptionsState());
+                });
             }
         } else if (FlxG.mouse.overlaps(credits)) {
             arrow.alpha = 255;
             arrow.y = credits.y;
 
             if (FlxG.mouse.justReleased) {
-                FlxG.switchState(new CreditState());
+                FlxG.sound.play("assets/sounds/buttonclick.wav", 1, false, null, false, function () {
+                    FlxG.switchState(new CreditState());
+                });
             }
         } else {
             arrow.alpha = 0;

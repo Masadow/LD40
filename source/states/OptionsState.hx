@@ -44,8 +44,6 @@ class OptionsState extends FlxState
 	{
 		super.create();
 
-        FlxG.sound.playMusic("assets/music/main.ogg", 0.5, true);
-
         var bg = new FlxSprite(0, 0, "assets/images/screens/bg.png");
         bg.x = - (Main.global_scale * bg.width) / 4;
         bg.y = - (Main.global_scale * bg.height) / 4;
@@ -173,7 +171,9 @@ class OptionsState extends FlxState
             arrow.y = back.y;
 
             if (FlxG.mouse.justReleased) {
-                FlxG.switchState(new WelcomeState());
+                FlxG.sound.play("assets/sounds/buttonclick.wav", 1, false, null, false, function () {
+                    FlxG.switchState(new WelcomeState());
+                });
             }
         } else {
             arrow.alpha = 0;
