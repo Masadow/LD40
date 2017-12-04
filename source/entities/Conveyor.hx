@@ -7,6 +7,7 @@ import flixel.group.FlxGroup;
 import entities.Muffin;
 import states.PlayState;
 import flixel.FlxBasic;
+import entities.ResetXSprite;
 
 typedef Belt = {
     y: Float,
@@ -25,7 +26,7 @@ class Conveyor extends FlxGroup
     private var lastPopped : Float;
     private var randomizer : FlxRandom;
     private var probabilityBoost : Float;
-    private static var SPEED = 162;
+    private static var SPEED = 100;
     private static var ANIM_SPEED_FACTOR = 15 / 162;
     private static var SPEEDUP_TIMER = 10;
     private static var SPEEDUP_FACTOR = 1.1;
@@ -56,9 +57,6 @@ class Conveyor extends FlxGroup
         belts = new Array<Belt>();
         var x = 0., y = this.y, y_incr = 0.;
 
-        var conveyor_scale = 0.75 * Main.global_scale;
-
-
         // Position shadow
         x = 0;
         while (x < FlxG.width) {
@@ -72,18 +70,34 @@ class Conveyor extends FlxGroup
 
         var i = 0;
         while (i++ < 3) {
-            x = 0;
             var convs = new Array<FlxSprite>();
+            x = 0;
             while (x < FlxG.width) {
                 var sprite = new FlxSprite(x, y);
-                sprite.loadGraphic("assets/images/conveyor/belt.png", true, 259, 231);
-                sprite.animation.add("run", [4, 0, 3, 1, 6, 7, 2, 5], Math.round(SPEED * ANIM_SPEED_FACTOR));
-                sprite.animation.play("run");
+                sprite.loadGraphic("assets/images/conveyor/belt_no_anim.png", false, 259, 231);
                 sprite.x -= (Main.global_scale * sprite.width) / 4;
                 sprite.y -= (Main.global_scale * sprite.height) / 4;
+//                sprite.loadGraphic("assets/images/conveyor/belt.png", true, 259, 231);
+//                sprite.animation.add("run", [4, 0, 3, 1, 6, 7, 2, 5], Math.round(SPEED * ANIM_SPEED_FACTOR));
+//                sprite.animation.play("run");
+//                sprite.x -= (Main.global_scale * sprite.width) / 4;
+//                sprite.y -= (Main.global_scale * sprite.height) / 4;
                 sprite.scale.set(Main.global_scale, Main.global_scale);
                 x += Main.global_scale * sprite.width;
                 y_incr = Main.global_scale * sprite.height;
+                add(sprite);
+//                convs.push(sprite);
+            }
+
+            x = -80;
+            while (x < FlxG.width) {
+                var sprite = new ResetXSprite(x, y);
+                sprite.loadGraphic("assets/images/conveyor/belt_line.png", false, 30, 185);
+                sprite.x -= (Main.global_scale * sprite.width) / 4;
+                sprite.y -= (Main.global_scale * sprite.height) / 4;
+                sprite.scale.set(Main.global_scale, Main.global_scale);
+                x += Main.global_scale * sprite.width * 4;
+                sprite.velocity.x = SPEED;
                 add(sprite);
                 convs.push(sprite);
             }
@@ -194,10 +208,11 @@ class Conveyor extends FlxGroup
             var belt = belts[randomizer.int(0, 2)];
             belt.speed *= SPEEDUP_FACTOR;
             for (muffin in belt.muffins) {
-                (cast muffin).velocity.x *= SPEEDUP_FACTOR;
+                (cast muffin).velocity.x = belt.speed;
             }
             for (conv in belt.convs) {
-                conv.animation.getByName("run").frameRate = Math.round(belt.speed * ANIM_SPEED_FACTOR);
+//                conv.animation.getByName("run").frameRate = Math.round(belt.speed * ANIM_SPEED_FACTOR);
+                conv.velocity.x = belt.speed;
             }
         }
 
