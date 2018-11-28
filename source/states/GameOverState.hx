@@ -76,19 +76,32 @@ class GameOverState extends FlxState
 	{
 		super.update(elapsed);
 
-        if (FlxG.mouse.overlaps(retry)) {
+        arrow_quit.alpha = 0;
+        arrow_retry.alpha = 0;
+        #if FLX_MOUSE
+        updateForInput(FlxG.mouse.overlaps(retry), FlxG.mouse.overlaps(quit), FlxG.mouse.justReleased);
+        #end
+        #if FLX_TOUCH
+        for (touch in FlxG.touches.list)
+        {
+            updateForInput(touch.overlaps(retry), touch.overlaps(quit), touch.justReleased);
+        }
+        #end
+	}
+
+    public function updateForInput(overlaps_retry : Bool, overlaps_quit : Bool, clicked : Bool)
+    {
+        if (overlaps_retry) {
             arrow_retry.alpha = 255;
 
-            if (FlxG.mouse.justReleased) {
+            if (clicked) {
                 FlxG.sound.play("assets/sounds/buttonclick.wav", 1, false, null, false, function () {
                     FlxG.switchState(new PlayState());
                 });
             }
-        } else {
-            arrow_retry.alpha = 0;
         }
 
-        if (FlxG.mouse.overlaps(quit)) {
+        if (overlaps_quit) {
             arrow_quit.alpha = 255;
 
             if (FlxG.mouse.justReleased) {
@@ -100,8 +113,6 @@ class GameOverState extends FlxState
                     #end
                 });
             }
-        } else {
-            arrow_quit.alpha = 0;
         }
-	}
+    }
 }

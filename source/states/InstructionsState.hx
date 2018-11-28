@@ -48,8 +48,17 @@ class InstructionsState extends FlxState
 	{
 		super.update(elapsed);
 
+        #if FLX_MOUSE
         if (FlxG.mouse.justReleased) {
             FlxG.switchState(new WelcomeState());
         }
+        #end
+        #if FLX_TOUCH
+        for (touch in FlxG.touches.list) {
+            if (touch.justReleased) {
+                FlxG.switchState(new WelcomeState());
+            }
+        }
+        #end
 	}
 }

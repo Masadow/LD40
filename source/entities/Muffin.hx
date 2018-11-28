@@ -267,6 +267,7 @@ class Muffin extends FlxSpriteGroup
         if (y + 150 < 0) {
             kill();
         } else if (selected) {
+            #if FLX_KEYBOARD
             if (FlxG.keys.anyJustPressed([PlayState.A_KEY])) {
                 hitCombo(PlayState.A_KEY);
             }
@@ -279,6 +280,7 @@ class Muffin extends FlxSpriteGroup
             if (FlxG.keys.anyJustPressed([PlayState.F_KEY])) {
                 hitCombo(PlayState.F_KEY);
             }
+            #end
         }
 	}
 

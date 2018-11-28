@@ -6,6 +6,7 @@ import states.PlayState;
 import states.CreditState;
 import states.OptionsState;
 import flixel.FlxG;
+import flixel.input.FlxPointer;
 
 
 class WelcomeState extends FlxState
@@ -65,35 +66,46 @@ class WelcomeState extends FlxState
 	{
 		super.update(elapsed);
 
-        if (FlxG.mouse.overlaps(play)) {
+        arrow.alpha = 0;
+        #if FLX_MOUSE
+        _updateForPointer(FlxG.mouse.justReleased, FlxG.mouse);
+        #end
+        #if FLX_TOUCH
+        for (touch in FlxG.touches.list) {
+            _updateForPointer(touch.justReleased, touch);
+        }
+        #end
+	}
+
+    private function _updateForPointer(clicked : Bool, pointer : FlxPointer)
+    {
+        if (pointer.overlaps(play)) {
             arrow.alpha = 255;
             arrow.y = play.y;
 
-            if (FlxG.mouse.justReleased) {
+            if (clicked) {
                 FlxG.sound.play("assets/sounds/buttonclick.wav", 1, false, null, false, function () {
                     FlxG.switchState(new PlayState());
                 });
             }
-        } else if (FlxG.mouse.overlaps(options)) {
+        } else if (pointer.overlaps(options)) {
             arrow.alpha = 255;
             arrow.y = options.y;
 
-            if (FlxG.mouse.justReleased) {
+            if (clicked) {
                 FlxG.sound.play("assets/sounds/buttonclick.wav", 1, false, null, false, function () {
                     FlxG.switchState(new OptionsState());
                 });
             }
-        } else if (FlxG.mouse.overlaps(credits)) {
+        } else if (pointer.overlaps(credits)) {
             arrow.alpha = 255;
             arrow.y = credits.y;
 
-            if (FlxG.mouse.justReleased) {
+            if (clicked) {
                 FlxG.sound.play("assets/sounds/buttonclick.wav", 1, false, null, false, function () {
                     FlxG.switchState(new CreditState());
                 });
             }
-        } else {
-            arrow.alpha = 0;
         }
-	}
+    }
 }

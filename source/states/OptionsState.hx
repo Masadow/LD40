@@ -7,6 +7,7 @@ import flixel.FlxG;
 import flixel.math.FlxRect;
 import flixel.text.FlxText;
 import flixel.effects.FlxFlicker;
+import flixel.input.FlxPointer;
 
 
 class OptionsState extends FlxState
@@ -121,6 +122,7 @@ class OptionsState extends FlxState
 	{
 		super.update(elapsed);
 
+        #if FLX_KEYBOARD
         var key = FlxG.keys.firstJustPressed();
         if ((FlxG.mouse.justPressed || key != -1) && editing >= 0) {
             if (key != -1) {
@@ -168,23 +170,35 @@ class OptionsState extends FlxState
                 editing = 3;
             }
         }
+        #end
 
-        if (FlxG.mouse.overlaps(slider) && FlxG.mouse.pressed) {
-            FlxG.sound.volume = (FlxG.mouse.x - 40 - dot_min_x) / dot_width;
+        arrow.alpha = 0;
+        #if FLX_MOUSE
+        _updateForPointer(FlxG.mouse.pressed, FlxG.mouse.justReleased, FlxG.mouse);
+        #end
+        #if FLX_TOUCH
+        for (touch in FlxG.touches.list) {
+            _updateForPointer(touch.pressed, touch.justReleased, touch);
         }
-        else if (FlxG.mouse.overlaps(back)) {
+        #end
+
+        sliderDot.x = dot_min_x + FlxG.sound.volume * dot_width;
+	}
+
+    private function _updateForPointer(pressed : Bool, clicked : Bool, pointer : FlxPointer)
+    {
+        if (pointer.overlaps(slider) && pressed) {
+            FlxG.sound.volume = (pointer.x - 40 - dot_min_x) / dot_width;
+        }
+        else if (pointer.overlaps(back)) {
             arrow.alpha = 255;
             arrow.y = back.y;
 
-            if (FlxG.mouse.justReleased) {
+            if (clicked) {
                 FlxG.sound.play("assets/sounds/buttonclick.wav", 1, false, null, false, function () {
                     FlxG.switchState(new WelcomeState());
                 });
             }
-        } else {
-            arrow.alpha = 0;
         }
-
-        sliderDot.x = dot_min_x + FlxG.sound.volume * dot_width;
-	}
+    }
 }

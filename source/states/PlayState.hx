@@ -9,6 +9,8 @@ import flixel.FlxG;
 import states.GameOverState;
 import entities.Background;
 import flixel.input.keyboard.FlxKey;
+import flixel.input.FlxPointer;
+
 
 class PlayState extends FlxState
 {
@@ -34,10 +36,10 @@ class PlayState extends FlxState
 		add(ui);
 	}
 
-	public function hasFoundSelection(muffin : Muffin) {
+	public function hasFoundSelection(muffin : Muffin, pointer : FlxPointer) {
 		if (muffin.velocity.x > 0) {
-			var mox = FlxG.mouse.x,
-				moy = FlxG.mouse.y,
+			var mox = pointer.x,
+				moy = pointer.y,
 				mux = muffin.x,
 				muy = muffin.y,
 				width = 130,
@@ -59,8 +61,17 @@ class PlayState extends FlxState
 			return ;
 		}
 
+		#if FLX_MOUSE
 		if (FlxG.mouse.justPressed) {
-			conveyor.forEachMuffin(hasFoundSelection);
+			conveyor.forEachMuffin(hasFoundSelection, FlxG.mouse);
 		}
+		#end
+		#if FLX_TOUCH
+		for (touch in FlxG.touches.list) {
+			if (touch.justPressed) {
+				conveyor.forEachMuffin(hasFoundSelection, touch);
+			}
+		}
+		#end
 	}
 }

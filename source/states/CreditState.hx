@@ -49,18 +49,28 @@ class CreditState extends FlxState
 	{
 		super.update(elapsed);
 
-        if (FlxG.mouse.overlaps(back)) {
+        arrow.alpha = 0;
+        #if FLX_MOUSE
+        _updateForPointer(FlxG.mouse.overlaps(back), FlxG.mouse.justReleased);
+        #end
+        #if FLX_TOUCH
+        for (touch in FlxG.touches.list) {
+            _updateForPointer(touch.overlaps(back), touch.justReleased);
+        }
+        #end
+	}
+
+    private function _updateForPointer(overlaps_back : Bool, clicked : Bool)
+    {
+        if (overlaps_back) {
             arrow.alpha = 255;
             arrow.y = back.y;
 
-            if (FlxG.mouse.justReleased) {
+            if (clicked) {
                 FlxG.sound.play("assets/sounds/buttonclick.wav", 1, false, null, false, function () {
                     FlxG.switchState(new WelcomeState());
                 });
             }
-        } else {
-            arrow.alpha = 0;
         }
-
-	}
+    } 
 }

@@ -8,6 +8,7 @@ import entities.Muffin;
 import states.PlayState;
 import flixel.FlxBasic;
 import entities.ResetXSprite;
+import flixel.input.FlxPointer;
 
 typedef Belt = {
     y: Float,
@@ -188,10 +189,10 @@ class Conveyor extends FlxGroup
         }
     }
 
-    public function forEachMuffin(callback : Muffin -> Void) {
+    public function forEachMuffin(callback : Muffin -> FlxPointer -> Void, pointer : FlxPointer) {
         for (belt in belts) {
             belt.muffins.forEachAlive(function (basic : FlxBasic) {
-		        callback(cast basic);
+		        callback(cast basic, pointer);
             });
         }
     }
