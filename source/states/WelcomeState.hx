@@ -24,41 +24,21 @@ class WelcomeState extends FlxState
 	{
 		super.create();
 
-        var bg = new FlxSprite(0, 0, "assets/images/screens/bg.png");
-        bg.x = - (Main.global_scale * bg.width) / 4;
-        bg.y = - (Main.global_scale * bg.height) / 4;
-        bg.scale.set(Main.global_scale, Main.global_scale);
-        add(bg);
+        add(new FlxSprite(0, 0, "assets/images/screens/bg.png"));
 
-        var title = new FlxSprite(630, 50, "assets/images/screens/title.png");
-        title.x -= (Main.global_scale * title.width) / 4;
-        title.y -= (Main.global_scale * title.height) / 4;
-        title.scale.set(Main.global_scale, Main.global_scale);
-        add(title);
+        add(new FlxSprite(950, 80, "assets/images/screens/title.png"));
 
-        play = new FlxSprite(0, 0, "assets/images/screens/play.png");
-        play.x = 720 - (Main.global_scale * play.width) / 4;
-        play.y = 340 - (Main.global_scale * play.height) / 4;
-        play.scale.set(Main.global_scale, Main.global_scale);
+        play = new FlxSprite(1100, 500, "assets/images/screens/play.png");
         add(play);
 
-        options = new FlxSprite(0, 0, "assets/images/screens/options.png");
-        options.x = 720 - (Main.global_scale * options.width) / 4;
-        options.y = 460 - (Main.global_scale * options.height) / 4;
-        options.scale.set(Main.global_scale, Main.global_scale);
+        options = new FlxSprite(1100, 675, "assets/images/screens/options.png");
         add(options);
 
-        credits = new FlxSprite(0, 0, "assets/images/screens/credits.png");
-        credits.x = 720 - (Main.global_scale * credits.width) / 4;
-        credits.y = 580 - (Main.global_scale * credits.height) / 4;
-        credits.scale.set(Main.global_scale, Main.global_scale);
+        credits = new FlxSprite(1100, 850, "assets/images/screens/credits.png");
         add(credits);
 
-        arrow = new FlxSprite(0, 0, "assets/images/screens/arrow.png");
-        arrow.x = 620 - (Main.global_scale * arrow.width) / 4;
-        arrow.y = 300 - (Main.global_scale * arrow.height) / 4;
+        arrow = new FlxSprite(950, 0, "assets/images/screens/arrow.png");
         arrow.alpha = 0;
-        arrow.scale.set(Main.global_scale, Main.global_scale);
         add(arrow);
 	}
 

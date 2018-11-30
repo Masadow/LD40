@@ -19,29 +19,15 @@ class CreditState extends FlxState
 	{
 		super.create();
 
-        var bg = new FlxSprite(0, 0, "assets/images/screens/bg.png");
-        bg.x = - (Main.global_scale * bg.width) / 4;
-        bg.y = - (Main.global_scale * bg.height) / 4;
-        bg.scale.set(Main.global_scale, Main.global_scale);
-        add(bg);
+        add(new FlxSprite(0, 0, "assets/images/screens/bg.png"));
 
-        var text = new FlxSprite(600, 60, "assets/images/screens/credit_names.png");
-        text.x -= (Main.global_scale * text.width) / 4;
-        text.y -= (Main.global_scale * text.height) / 4;
-        text.scale.set(Main.global_scale, Main.global_scale);
-        add(text);
+        add(new FlxSprite(900, 100, "assets/images/screens/credit_names.png"));
 
-        back = new FlxSprite(0, 0, "assets/images/screens/back.png");
-        back.x = 1020 - (Main.global_scale * back.width) / 4;
-        back.y = 580 - (Main.global_scale * back.height) / 4;
-        back.scale.set(Main.global_scale, Main.global_scale);
+        back = new FlxSprite(1500, 850, "assets/images/screens/back.png");
         add(back);
 
-        arrow = new FlxSprite(0, 0, "assets/images/screens/arrow.png");
-        arrow.x = 920 - (Main.global_scale * arrow.width) / 4;
-        arrow.y = 300 - (Main.global_scale * arrow.height) / 4;
+        arrow = new FlxSprite(1350, 850, "assets/images/screens/arrow.png");
         arrow.alpha = 0;
-        arrow.scale.set(Main.global_scale, Main.global_scale);
         add(arrow);
 	}
 

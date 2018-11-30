@@ -13,6 +13,6 @@ class Main extends Sprite
 	{
 		super();
 		FlxAssets.FONT_DEFAULT = "assets/fonts/Vanilla.ttf";
-		addChild(new FlxGame(0, 0, InstructionsState, 1, 60, 60, true, false));
+		addChild(new FlxGame(1920, 1080, InstructionsState, 1, 60, 60, true, false));
 	}
 }

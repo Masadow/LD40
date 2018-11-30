@@ -6,6 +6,7 @@ import states.PlayState;
 import flixel.FlxSprite;
 import flixel.FlxG;
 import openfl.Lib;
+import openfl.system.System;
 
 
 class GameOverState extends FlxState
@@ -104,10 +105,12 @@ class GameOverState extends FlxState
         if (overlaps_quit) {
             arrow_quit.alpha = 255;
 
-            if (FlxG.mouse.justReleased) {
+            if (clicked) {
                 FlxG.sound.play("assets/sounds/buttonclick.wav", 1, false, null, false, function () {
                     #if html5
                     FlxG.switchState(new states.InstructionsState());
+                    #elseif android
+                    System.exit(0);
                     #else
                     Lib.close();
                     #end
