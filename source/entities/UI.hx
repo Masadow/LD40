@@ -30,9 +30,9 @@ class UI extends FlxGroup {
         #if FLX_TOUCH
         actionButton = new Array<TouchAction>();
         addTouch(100, 250, PlayState.A_KEY, FlxColor.RED);
-        addTouch(100, 400, PlayState.S_KEY, FlxColor.PURPLE);
+        addTouch(100, 400, PlayState.S_KEY, FlxColor.MAGENTA);
         addTouch(100, 550, PlayState.D_KEY, FlxColor.CYAN);
-        addTouch(100, 700, PlayState.F_KEY, FlxColor.YELLOW);
+        addTouch(100, 700, PlayState.F_KEY, FlxColor.ORANGE);
         #end
 
         UI.score = 0;

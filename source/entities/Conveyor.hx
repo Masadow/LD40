@@ -27,11 +27,11 @@ class Conveyor extends FlxGroup
     private var lastPopped : Float;
     private var randomizer : FlxRandom;
     private var probabilityBoost : Float;
-    private static var SPEED = 100;
+    private static var SPEED = 150;
     private static var ANIM_SPEED_FACTOR = 15 / 162;
     private static var SPEEDUP_TIMER = 10;
     private static var SPEEDUP_FACTOR = 1.1;
-    private static var BUSY_TIMEOUT = 1;
+    private static var BUSY_TIMEOUT = 1.5;
     private var maxCombo : Int;
     private var y : Float;
     private var height : Float;

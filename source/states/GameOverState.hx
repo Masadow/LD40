@@ -28,48 +28,30 @@ class GameOverState extends FlxState
 		super.create();
 
         var bg = new FlxSprite(0, 0, "assets/images/screens/game_over_bg.png");
-        bg.x = - (Main.global_scale * bg.width) / 4;
-        bg.y = - (Main.global_scale * bg.height) / 4;
-        bg.scale.set(Main.global_scale, Main.global_scale);
         add(bg);
 
-        var text = new FlxSprite(600, 100, "assets/images/screens/gameover.png");
-        text.x -= (Main.global_scale * text.width) / 4;
-        text.y -= (Main.global_scale * text.height) / 4;
-        text.scale.set(Main.global_scale, Main.global_scale);
+        var text = new FlxSprite(850, 150, "assets/images/screens/gameover.png");
         add(text);
 
         var score = new FlxText();
         score.text = this.score + "";
-        score.size = 75;
+        score.size = 90;
         score.screenCenter();
-        score.x += 250;
+        score.x += 350;
         add(score);
 
-        retry = new FlxSprite(0, 0, "assets/images/screens/retry.png");
-        retry.x = 940 - (Main.global_scale * retry.width) / 4;
-        retry.y = 480 - (Main.global_scale * retry.height) / 4;
-        retry.scale.set(Main.global_scale, Main.global_scale);
+        retry = new FlxSprite(1400, 700, "assets/images/screens/retry.png");
         add(retry);
 
-        arrow_retry = new FlxSprite(0, 0, "assets/images/screens/arrow.png");
-        arrow_retry.x = 840 - (Main.global_scale * arrow_retry.width) / 4;
-        arrow_retry.y = 480 - (Main.global_scale * arrow_retry.height) / 4;
+        arrow_retry = new FlxSprite(1250, 700, "assets/images/screens/arrow.png");
         arrow_retry.alpha = 0;
-        arrow_retry.scale.set(Main.global_scale, Main.global_scale);
         add(arrow_retry);
 
-        quit = new FlxSprite(0, 0, "assets/images/screens/quit.png");
-        quit.x = 1020 - (Main.global_scale * quit.width) / 4;
-        quit.y = 580 - (Main.global_scale * quit.height) / 4;
-        quit.scale.set(Main.global_scale, Main.global_scale);
+        quit = new FlxSprite(1530, 850, "assets/images/screens/quit.png");
         add(quit);
 
-        arrow_quit = new FlxSprite(0, 0, "assets/images/screens/arrow.png");
-        arrow_quit.x = 920 - (Main.global_scale * arrow_quit.width) / 4;
-        arrow_quit.y = 580 - (Main.global_scale * arrow_quit.height) / 4;
+        arrow_quit = new FlxSprite(1380, 850, "assets/images/screens/arrow.png");
         arrow_quit.alpha = 0;
-        arrow_quit.scale.set(Main.global_scale, Main.global_scale);
         add(arrow_quit);
 	}
 
