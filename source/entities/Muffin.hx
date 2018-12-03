@@ -10,7 +10,7 @@ import states.PlayState;
 
 typedef ComboState = {
     letter: FlxText,
-    key: FlxKey,
+    key: Int,
     done: Bool
 }
 
@@ -122,9 +122,11 @@ class Muffin extends FlxSpriteGroup
 
         velocity.y = 0;
 
+        #if FLX_KEYBOARD
         for (letter in letters) {
             letter.alpha = 0;
         }
+        #end
 
         for (toppin in toppins) {
             toppin.animation.play("idle");
@@ -164,6 +166,7 @@ class Muffin extends FlxSpriteGroup
             } else if (combo == PlayState.F_KEY) {
                 idx = 3;
             }
+            #if FLX_KEYBOARD
             var letter : FlxText = letters[idx];
             letter.alpha = 255;
             this.combos.push({
@@ -171,9 +174,18 @@ class Muffin extends FlxSpriteGroup
                 key: combo,
                 done: false
             });
+            #else
+            this.combos.push({
+                letter: null,
+                key: combo,
+                done: false
+            });
+            #end
         }
 
+        #if FLX_KEYBOARD
         positionLetters();
+        #end
     }
 
     private function drawCombo(idx : Int) {
@@ -203,7 +215,7 @@ class Muffin extends FlxSpriteGroup
         }
     }
 
-    private function hitCombo(key:FlxKey) {
+    private function hitCombo(key:Int) {
         var i = 0;
         for (combo in combos) {
             if (combo.done) {
@@ -269,6 +281,14 @@ class Muffin extends FlxSpriteGroup
             }
             if (FlxG.keys.anyJustPressed([PlayState.F_KEY])) {
                 hitCombo(PlayState.F_KEY);
+            }
+            #end
+            #if FLX_TOUCH
+            for (ab in UI.actionButton)
+            {
+                if (ab.touched()) {
+                    hitCombo(ab.key());
+                }
             }
             #end
         }

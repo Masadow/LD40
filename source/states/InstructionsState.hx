@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import states.WelcomeState;
 import flixel.FlxG;
 import flixel.text.FlxText;
+import Sys;
 
 
 class InstructionsState extends FlxState

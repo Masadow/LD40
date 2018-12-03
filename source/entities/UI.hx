@@ -14,6 +14,7 @@ class UI extends FlxGroup {
     public static var health : Int;
     public var scoreTxt : FlxText;
     public var healthPoints : Array<FlxSprite>;
+    public static var actionButton : Array<TouchAction>;
 
     public function new() {
         super();
@@ -25,6 +26,13 @@ class UI extends FlxGroup {
         addAction(465, 32, String.fromCharCode(PlayState.S_KEY));
         addAction(705, 32, String.fromCharCode(PlayState.D_KEY));
         addAction(945, 32, String.fromCharCode(PlayState.F_KEY));
+        #end
+        #if FLX_TOUCH
+        actionButton = new Array<TouchAction>();
+        addTouch(100, 250, PlayState.A_KEY, FlxColor.RED);
+        addTouch(100, 400, PlayState.S_KEY, FlxColor.PURPLE);
+        addTouch(100, 550, PlayState.D_KEY, FlxColor.CYAN);
+        addTouch(100, 700, PlayState.F_KEY, FlxColor.YELLOW);
         #end
 
         UI.score = 0;
@@ -45,6 +53,12 @@ class UI extends FlxGroup {
         txt.color = FlxColor.WHITE;
         txt.size = 42;
         add(txt);
+    }
+
+    private function addTouch(x : Float, y : Float, key : Int, color : FlxColor) : Void {
+        var btn = new TouchAction(x, y, color, key);
+        actionButton.push(btn);
+        add(btn);
     }
 
     function addScore() {

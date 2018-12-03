@@ -44,6 +44,12 @@ class PlayState extends FlxState
 				muy = muffin.y,
 				width = 200,
 				height = 220;
+			#if FLX_TOUCH
+			if (mox < 200)
+			{
+				return ;
+			}
+			#end
 			if (mox > mux && mox < mux + width && moy > muy && moy < muy + height) {
 				selector.select(muffin);
 			}
