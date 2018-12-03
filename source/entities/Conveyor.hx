@@ -61,11 +61,8 @@ class Conveyor extends FlxGroup
         // Position shadow
         x = 0;
         while (x < FlxG.width) {
-            var sprite = new FlxSprite(x, 513, "assets/images/conveyor/belt_shadow.png");
-            sprite.x -= (Main.global_scale * sprite.width) / 4;
-            sprite.y -= (Main.global_scale * sprite.height) / 4;
-            sprite.scale.set(Main.global_scale, Main.global_scale);
-            x += Main.global_scale * sprite.width;
+            var sprite = new FlxSprite(x, 769, "assets/images/conveyor/belt_shadow.png");
+            x += sprite.width;
             add(sprite);
         }
 
@@ -76,39 +73,30 @@ class Conveyor extends FlxGroup
             while (x < FlxG.width) {
                 var sprite = new FlxSprite(x, y);
                 sprite.loadGraphic("assets/images/conveyor/belt_no_anim.png", false, 259, 231);
-                sprite.x -= (Main.global_scale * sprite.width) / 4;
-                sprite.y -= (Main.global_scale * sprite.height) / 4;
 //                sprite.loadGraphic("assets/images/conveyor/belt.png", true, 259, 231);
 //                sprite.animation.add("run", [4, 0, 3, 1, 6, 7, 2, 5], Math.round(SPEED * ANIM_SPEED_FACTOR));
 //                sprite.animation.play("run");
 //                sprite.x -= (Main.global_scale * sprite.width) / 4;
 //                sprite.y -= (Main.global_scale * sprite.height) / 4;
-                sprite.scale.set(Main.global_scale, Main.global_scale);
-                x += Main.global_scale * sprite.width;
-                y_incr = Main.global_scale * sprite.height;
+                x += sprite.width;
+                y_incr = sprite.height;
                 add(sprite);
 //                convs.push(sprite);
             }
 
-            x = -80;
+            x = -120;
             while (x < FlxG.width) {
                 var sprite = new ResetXSprite(x, y);
                 sprite.loadGraphic("assets/images/conveyor/belt_line.png", false, 30, 185);
-                sprite.x -= (Main.global_scale * sprite.width) / 4;
-                sprite.y -= (Main.global_scale * sprite.height) / 4;
-                sprite.scale.set(Main.global_scale, Main.global_scale);
-                x += Main.global_scale * sprite.width * 4;
+                x += sprite.width * 4;
                 sprite.velocity.x = SPEED;
                 add(sprite);
                 convs.push(sprite);
             }
 
-            var edge = new FlxSprite(FlxG.width - 100 - i * 10, y - 40, "assets/images/conveyor/edge.png");
-            edge.x -= (Main.global_scale * edge.width) / 4;
-            edge.y -= (Main.global_scale * edge.height) / 4;
-            edge.scale.set(Main.global_scale, Main.global_scale);
+            var edge = new FlxSprite(FlxG.width - 160 - i * 10, y - 59, "assets/images/conveyor/edge.png");
 
-            y += y_incr - 30;
+            y += y_incr - 45;
 
             belts.push({
                 y: y - 10,

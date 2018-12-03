@@ -20,10 +20,12 @@ class UI extends FlxGroup {
 
         addBackground();
 
-        addAction(140, 15, String.fromCharCode(PlayState.A_KEY));
-        addAction(305, 15, String.fromCharCode(PlayState.S_KEY));
-        addAction(465, 15, String.fromCharCode(PlayState.D_KEY));
-        addAction(625, 15, String.fromCharCode(PlayState.F_KEY));
+        #if FLX_KEYBOARD
+        addAction(225, 32, String.fromCharCode(PlayState.A_KEY));
+        addAction(465, 32, String.fromCharCode(PlayState.S_KEY));
+        addAction(705, 32, String.fromCharCode(PlayState.D_KEY));
+        addAction(945, 32, String.fromCharCode(PlayState.F_KEY));
+        #end
 
         UI.score = 0;
         addScore();
@@ -35,9 +37,6 @@ class UI extends FlxGroup {
 
     private function addBackground() {
         var bg = new FlxSprite(0, 0, "assets/images/ui_frame.png");
-        bg.x = - (Main.global_scale * bg.width) / 4;
-        bg.y = - (Main.global_scale * bg.height) / 4;
-        bg.scale.set(Main.global_scale, Main.global_scale);
         add(bg);
     }
 
@@ -49,8 +48,8 @@ class UI extends FlxGroup {
     }
 
     function addScore() {
-        scoreTxt = new FlxText(FlxG.width - 380, 37, 310, "0" + "\n ");
-        scoreTxt.size = 42;
+        scoreTxt = new FlxText(FlxG.width - 400, 55, 310, "0" + "\n ");
+        scoreTxt.size = 64;
         scoreTxt.alignment = FlxTextAlign.RIGHT;
         add(scoreTxt);
     }
@@ -58,7 +57,7 @@ class UI extends FlxGroup {
     function addHealth() {
         var health = 0;
         while (health++ < MAX_HEALTH) {
-            var healthPoint = new FlxSprite(FlxG.width - 75, 150 + health * 70, "assets/images/life_on.png");
+            var healthPoint = new FlxSprite(FlxG.width - 93, 260 + health * 90, "assets/images/life_on.png");
             healthPoint.scale.set(Main.global_scale, Main.global_scale);
             healthPoint.health = 2;
             add(healthPoint);

@@ -8,7 +8,7 @@ class ResetXSprite extends FlxSprite {
         super.update(elapsed);
 
         if (x > FlxG.width) {
-            x = -80;
+            x = -120;
         }
     }
 }

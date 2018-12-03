@@ -29,7 +29,7 @@ class PlayState extends FlxState
 
 		ui = new UI();
 		selector = new Selector();
-		conveyor = new Conveyor(180);
+		conveyor = new Conveyor(270);
 
 		add(new Background());
 		add(conveyor);
@@ -42,8 +42,8 @@ class PlayState extends FlxState
 				moy = pointer.y,
 				mux = muffin.x,
 				muy = muffin.y,
-				width = 130,
-				height = 150;
+				width = 200,
+				height = 220;
 			if (mox > mux && mox < mux + width && moy > muy && moy < muy + height) {
 				selector.select(muffin);
 			}
