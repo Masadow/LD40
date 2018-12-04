@@ -27,15 +27,16 @@ class Conveyor extends FlxGroup
     private var lastPopped : Float;
     private var randomizer : FlxRandom;
     private var probabilityBoost : Float;
-    private static var SPEED = 150;
+    private static var SPEED = 100;
     private static var ANIM_SPEED_FACTOR = 15 / 162;
     private static var SPEEDUP_TIMER = 10;
     private static var SPEEDUP_FACTOR = 1.1;
-    private static var BUSY_TIMEOUT = 1.5;
+    private static var BUSY_TIMEOUT = 2.;
+    private static var CONVEYORS = 1;
     private var maxCombo : Int;
     private var y : Float;
     private var height : Float;
-    private var belts : Array<Belt>;
+    public var belts : Array<Belt>;
     private var timerBeforeSpeedUp : Float;
 
 	public function new(?Y:Float = 0)
@@ -61,13 +62,13 @@ class Conveyor extends FlxGroup
         // Position shadow
         x = 0;
         while (x < FlxG.width) {
-            var sprite = new FlxSprite(x, 769, "assets/images/conveyor/belt_shadow.png");
+            var sprite = new FlxSprite(x, 579, "assets/images/conveyor/belt_shadow.png");
             x += sprite.width;
             add(sprite);
         }
 
         var i = 0;
-        while (i++ < 3) {
+        while (i++ < CONVEYORS) {
             var convs = new Array<FlxSprite>();
             x = 0;
             while (x < FlxG.width) {
@@ -130,7 +131,7 @@ class Conveyor extends FlxGroup
     }
 
     public function popMuffin() : Void {
-        belts[randomizer.int(0, 2)].queue++;
+        belts[randomizer.int(0, CONVEYORS - 1)].queue++;
     }
 
     public function popMuffins() : Void {
@@ -195,7 +196,7 @@ class Conveyor extends FlxGroup
 
         if (timerBeforeSpeedUp < 0) {
             timerBeforeSpeedUp = SPEEDUP_TIMER;
-            var belt = belts[randomizer.int(0, 2)];
+            var belt = belts[randomizer.int(0, CONVEYORS - 1)];
             belt.speed *= SPEEDUP_FACTOR;
             for (muffin in belt.muffins) {
                 (cast muffin).velocity.x = belt.speed;

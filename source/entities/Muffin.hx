@@ -117,7 +117,7 @@ class Muffin extends FlxSpriteGroup
     }
 
     public function init(Y:Float, speed:Float, combos:Array<FlxKey>, onMistake : Void -> Void) : Void {
-        x = -130;
+        x = -200;
         y = Y;
 
         velocity.y = 0;
@@ -168,7 +168,7 @@ class Muffin extends FlxSpriteGroup
             }
             #if FLX_KEYBOARD
             var letter : FlxText = letters[idx];
-            letter.alpha = 255;
+            letter.alpha = 0;
             this.combos.push({
                 letter: letter,
                 key: combo,
@@ -215,7 +215,7 @@ class Muffin extends FlxSpriteGroup
         }
     }
 
-    private function hitCombo(key:Int) {
+    public function hitCombo(key:Int) {
         var i = 0;
         for (combo in combos) {
             if (combo.done) {
