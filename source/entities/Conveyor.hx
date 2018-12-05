@@ -211,11 +211,13 @@ class Conveyor extends FlxGroup
             popMuffins();
         }
 
+        /*
         if (elapsedTotal > 30) {
             maxCombo = 3;
         } else if (elapsedTotal > 10) {
             maxCombo = 2;
         }
+        */
 
         var beltIdx = 0;
         for (belt in belts) {
