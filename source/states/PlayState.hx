@@ -42,8 +42,8 @@ class PlayState extends FlxState
 				moy = pointer.y,
 				mux = muffin.x,
 				muy = muffin.y,
-				width = 200,
-				height = 220;
+				width = 200 * Muffin.SCALE,
+				height = 220 * Muffin.SCALE;
 			#if FLX_TOUCH
 			if (mox < 200)
 			{

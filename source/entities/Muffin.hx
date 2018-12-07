@@ -23,7 +23,8 @@ typedef BaseSprites = {
 
 class Muffin extends FlxSpriteGroup
 {
-    public static var BASE_HEIGHT = 225;
+    public static var SCALE = 0.5;
+    public static var BASE_HEIGHT = 225 * SCALE;
     private var combos : Array<ComboState>;
     private var onMistake : Void -> Void;
 
@@ -43,23 +44,12 @@ class Muffin extends FlxSpriteGroup
         selected = false;
         selectorSprite = new FlxSprite(10, 160, "assets/images/muffin/unselected.png");
 
-        var baseOffsetX = 20;
-        var baseOffsetY = 135;
-        #if html5
         baseSprites = {
-            left: new FlxSprite(-2 + baseOffsetX, 0 + baseOffsetY, "assets/images/muffin/base/left_white.png"),
-            mid_left: new FlxSprite(62 + baseOffsetX, 0 + baseOffsetY, "assets/images/muffin/base/mid_left_white.png"),
-            mid_right: new FlxSprite(85 + baseOffsetX, 2 + baseOffsetY, "assets/images/muffin/base/mid_right_white.png"),
-            right: new FlxSprite(107 + baseOffsetX, 1 + baseOffsetY, "assets/images/muffin/base/right_white.png")
+            left: new FlxSprite(0, 0, "assets/images/muffin/base/left_white.png"),
+            mid_left: new FlxSprite(0, 0, "assets/images/muffin/base/mid_left_white.png"),
+            mid_right: new FlxSprite(0, 0, "assets/images/muffin/base/mid_right_white.png"),
+            right: new FlxSprite(0, 0, "assets/images/muffin/base/right_white.png")
         };
-        #else
-        baseSprites = {
-            left: new FlxSprite(-2 + baseOffsetX, 0 + baseOffsetY, "assets/images/muffin/base/left_white.png"),
-            mid_left: new FlxSprite(62 + baseOffsetX, 0 + baseOffsetY, "assets/images/muffin/base/mid_left_white.png"),
-            mid_right: new FlxSprite(85 + baseOffsetX, 2 + baseOffsetY, "assets/images/muffin/base/mid_right_white.png"),
-            right: new FlxSprite(107 + baseOffsetX, 1 + baseOffsetY, "assets/images/muffin/base/right_white.png")
-        };
-        #end
 
         headSprite = new FlxSprite(0, 0, "assets/images/muffin/head.png");
 
@@ -101,7 +91,54 @@ class Muffin extends FlxSpriteGroup
 
             scaleMultiplier *= 0.75;
         }
+
+        position_sprites();
 	}
+
+    private function position_sprites() {
+        var saveX = x;
+        var saveY = y;
+        x = 0;
+        y = 0;
+
+        var baseOffsetX = 18;
+        var baseOffsetY = 135;
+        var selectorOffsetX = 10;
+        var selectorOffsetY = 160;
+        
+        headSprite.origin.set(0, 0);
+        headSprite.scale.set(SCALE, SCALE);
+        headSprite.x = 0;
+        headSprite.y = 0;
+
+        baseSprites.left.origin.set(0, 0);
+        baseSprites.left.scale.set(SCALE, SCALE);
+        baseSprites.left.x = SCALE * baseOffsetX;
+        baseSprites.left.y = SCALE * baseOffsetY; 
+
+        baseSprites.mid_left.origin.set(0, 0);
+        baseSprites.mid_left.scale.set(SCALE, SCALE);
+        baseSprites.mid_left.x = baseSprites.left.x + SCALE * baseSprites.left.width;
+        baseSprites.mid_left.y = SCALE * baseOffsetY;
+
+        baseSprites.mid_right.origin.set(0, 0);
+        baseSprites.mid_right.scale.set(SCALE, SCALE);
+        baseSprites.mid_right.x = baseSprites.mid_left.x + SCALE * baseSprites.mid_left.width;
+        baseSprites.mid_right.y = SCALE * (baseOffsetY + 2);
+
+        baseSprites.right.origin.set(0, 0);
+        baseSprites.right.scale.set(SCALE, SCALE);
+        baseSprites.right.x = baseSprites.mid_right.x + SCALE * baseSprites.mid_right.width;
+        baseSprites.right.y = SCALE * (baseOffsetY + 1);
+
+        selectorSprite.origin.set(0, 0);
+        selectorSprite.scale.set(SCALE, SCALE);
+        selectorSprite.x = SCALE * selectorOffsetX;
+        selectorSprite.y = SCALE * selectorOffsetY;
+
+        x = saveX;
+        y = saveY;
+    }
 
     private function get_combo_color(combo : FlxKey) : String {
         if (combo == PlayState.A_KEY) {
@@ -153,7 +190,9 @@ class Muffin extends FlxSpriteGroup
             baseSprites.mid_right.loadGraphic("assets/images/muffin/base/mid_right_"+ get_combo_color(combos[1]) +".png");
             baseSprites.right.loadGraphic("assets/images/muffin/base/right_"+ get_combo_color(combos[2]) +".png");
         }
- 
+
+        position_sprites();
+
         var x = 0.;
         for (combo in combos) {
             var idx = 0;
@@ -189,7 +228,7 @@ class Muffin extends FlxSpriteGroup
     }
 
     private function drawCombo(idx : Int) {
-        toppins[idx].animation.play("run");
+//        toppins[idx].animation.play("run");
         if (combos.length == 1) {
             baseSprites.left.loadGraphic("assets/images/muffin/base/left_white.png");
             baseSprites.mid_left.loadGraphic("assets/images/muffin/base/mid_left_white.png");
@@ -213,9 +252,10 @@ class Muffin extends FlxSpriteGroup
                 baseSprites.right.loadGraphic("assets/images/muffin/base/right_white.png");
             }
         }
+        position_sprites();
     }
 
-    private function hitCombo(key:Int) {
+    public function hitCombo(key:Int) {
         var i = 0;
         for (combo in combos) {
             if (combo.done) {
@@ -299,11 +339,18 @@ class Muffin extends FlxSpriteGroup
         selected = true;
         selectorSprite.loadGraphic("assets/images/muffin/selected.png");
         headSprite.loadGraphic("assets/images/muffin/head_selected.png");
+        position_sprites();
     }
 
     public function unselect() {
         selected = false;
         selectorSprite.loadGraphic("assets/images/muffin/unselected.png");
         headSprite.loadGraphic("assets/images/muffin/head.png");
+        position_sprites();
+    }
+
+    public function getNextCombo() : Int
+    {
+        return combos[0].key;
     }
 }

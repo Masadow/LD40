@@ -14,10 +14,11 @@ typedef Belt = {
     y: Float,
     busyTimer : Float,
     queue : Int,
-    muffins: FlxGroup,
+    muffins: FlxTypedGroup<Muffin>,
     edge: FlxSprite,
     speed: Float,
-    convs: Array<FlxSprite>
+    convs: Array<FlxSprite>,
+    lastPopped: Muffin
 }
 
 
@@ -27,11 +28,13 @@ class Conveyor extends FlxGroup
     private var lastPopped : Float;
     private var randomizer : FlxRandom;
     private var probabilityBoost : Float;
-    private static var SPEED = 150;
+    private static var SPEED = 100;
     private static var ANIM_SPEED_FACTOR = 15 / 162;
     private static var SPEEDUP_TIMER = 10;
-    private static var SPEEDUP_FACTOR = 1.1;
+    private static var SPEEDUP_FACTOR = 1.0;
     private static var BUSY_TIMEOUT = 1.5;
+    private static var GAP_SIZE = 250;
+    private static var BELT_COUNT = 2;
     private var maxCombo : Int;
     private var y : Float;
     private var height : Float;
@@ -61,13 +64,13 @@ class Conveyor extends FlxGroup
         // Position shadow
         x = 0;
         while (x < FlxG.width) {
-            var sprite = new FlxSprite(x, 769, "assets/images/conveyor/belt_shadow.png");
+            var sprite = new FlxSprite(x, y + 185 * BELT_COUNT - 59, "assets/images/conveyor/belt_shadow.png");
             x += sprite.width;
             add(sprite);
         }
 
         var i = 0;
-        while (i++ < 3) {
+        while (i++ < BELT_COUNT) {
             var convs = new Array<FlxSprite>();
             x = 0;
             while (x < FlxG.width) {
@@ -102,10 +105,11 @@ class Conveyor extends FlxGroup
                 y: y - 10,
                 busyTimer: 0,
                 queue: 0,
-                muffins: new FlxGroup(),
+                muffins: new FlxTypedGroup<Muffin>(),
                 edge: edge,
                 speed: SPEED,
-                convs: convs
+                convs: convs,
+                lastPopped: null
             });
         }
 
@@ -119,18 +123,38 @@ class Conveyor extends FlxGroup
 
     private function popOnBelt(beltId : Int) : Void {
         var comboSize : Int= cast Math.min(randomizer.weightedPick([60, 30, 10]) + 1, maxCombo);
-        var combo = [PlayState.A_KEY, PlayState.S_KEY, PlayState.D_KEY, PlayState.F_KEY];
-        while (comboSize++ < 4) {
+        var combo : Array<Int> = [PlayState.A_KEY, PlayState.S_KEY, PlayState.D_KEY, PlayState.F_KEY];
+
+        //Prevents three muffins with same combo in a row
+        if (belts[beltId].muffins.countLiving() >= 2) {
+            var muffin_1 : Muffin = null;
+            var muffin_2 : Muffin = null;
+            belts[beltId].muffins.forEachAlive(function (m : FlxBasic) {
+                if (muffin_1 == null) {
+                    muffin_1 = cast m;
+                } else if (muffin_2 == null) {
+                    muffin_2 = cast m;
+                }
+            });
+            if (muffin_1.getNextCombo() == muffin_2.getNextCombo()) {
+                combo.remove(muffin_1.getNextCombo());
+            }
+        }
+
+        while (combo.length > comboSize) {
             combo.splice(randomizer.int(0, combo.length - 1), 1);
         }
         randomizer.shuffle(combo);
         var belt = belts[beltId];
-        var m : Muffin = cast belt.muffins.recycle(Muffin);
-        m.init(belt.y - Muffin.BASE_HEIGHT, belt.speed, combo, popMuffin);
+        belt.lastPopped = cast belt.muffins.recycle(Muffin);
+        belt.lastPopped.init(belt.y - Muffin.BASE_HEIGHT, belt.speed, combo, popMuffin);
+        //Sort muffins from left to right
+        belt.muffins.sort(function (_:Int, left:FlxBasic, right:FlxBasic) return (cast left).x - (cast right).x);
     }
 
     public function popMuffin() : Void {
-        belts[randomizer.int(0, 2)].queue++;
+//        belts[randomizer.int(0, 2)].queue++;
+//        belts[1].queue++;
     }
 
     public function popMuffins() : Void {
@@ -163,9 +187,7 @@ class Conveyor extends FlxGroup
     private function checkMuffins() : Void
     {
         for (belt in belts) {
-            belt.muffins.forEachAlive(function (basic_muffin : FlxBasic) {
-                var muffin : Muffin = cast basic_muffin;
-
+            belt.muffins.forEachAlive(function (muffin : Muffin) {
                 if (muffin.x > belt.edge.x + 30) {
                     FlxG.sound.play("assets/sounds/loose_life.wav");
                     muffin.alive = false;
@@ -185,6 +207,63 @@ class Conveyor extends FlxGroup
         }
     }
 
+    public function checkGaps(belt : Belt)
+    {
+        var idx : Int = 0;
+        var leftMuffin : Muffin = null;
+        var fillGap = false;
+
+        belt.muffins.forEachAlive(function (muffin : Muffin) {
+            //Muffins with 0 x velocity are muffins completed
+            if (muffin.velocity.x > 0) {
+                if (!fillGap && leftMuffin != null) {
+                    if (leftMuffin.getNextCombo() == muffin.getNextCombo()) {
+                        //Same muffin should be next to each other
+                        if (muffin.x - leftMuffin.x > (GAP_SIZE + 5) * Muffin.SCALE) {
+                            //Otherwise, we'll move all the muffins at the right to the left to fill the gap
+                            fillGap = true;
+                        }
+                    }
+                }
+                if (fillGap) {
+                    muffin.x -= GAP_SIZE * Muffin.SCALE;
+                }
+                leftMuffin = muffin;
+            }
+        });
+    }
+
+    public function checkAutoremove(belt : Belt)
+    {
+        var killCombo : Int = -1;
+        var left_1 : Muffin = null;
+        var left_2 : Muffin = null;
+        belt.muffins.forEachAlive(function (muffin : Muffin) {
+            if (killCombo == -2) return ; //We have find a combo so we won't search for another one this loop
+            //Muffins with 0 x velocity are muffins completed
+            if (muffin.velocity.x > 0) {
+                if (killCombo >= 0) {
+                    if (muffin.getNextCombo() == killCombo) {
+                        muffin.hitCombo(killCombo);
+                    } else {
+                        killCombo = -2;
+                    }
+                }
+                else if (left_1 != null && left_2 != null) {
+                    if (left_1.getNextCombo() == left_2.getNextCombo() && left_2.getNextCombo() == muffin.getNextCombo()) {
+                        //Three in a row, starts demolition
+                        killCombo = left_1.getNextCombo();
+                        left_1.hitCombo(killCombo);
+                        left_2.hitCombo(killCombo);
+                        muffin.hitCombo(killCombo);
+                    }
+                }
+                left_2 = left_1;
+                left_1 = muffin;
+            }
+        });
+    }
+
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
@@ -195,7 +274,8 @@ class Conveyor extends FlxGroup
 
         if (timerBeforeSpeedUp < 0) {
             timerBeforeSpeedUp = SPEEDUP_TIMER;
-            var belt = belts[randomizer.int(0, 2)];
+//            var belt = belts[randomizer.int(0, 2)];
+            var belt = belts[1];
             belt.speed *= SPEEDUP_FACTOR;
             for (muffin in belt.muffins) {
                 (cast muffin).velocity.x = belt.speed;
@@ -206,9 +286,25 @@ class Conveyor extends FlxGroup
             }
         }
 
+        /*
         if (lastPopped > 0.5) {
             lastPopped -= 0.5;
             popMuffins();
+        }
+        */
+
+        var beltIdx = 0;
+        for (belt in belts) {
+            checkGaps(belt);
+            checkAutoremove(belt);
+            if (belt.lastPopped == null) {
+                popOnBelt(beltIdx);
+            } else if (belt.lastPopped.x > 0) {
+                var x_ref = belt.lastPopped.x;
+                popOnBelt(beltIdx);
+                belt.lastPopped.x = x_ref - GAP_SIZE * Muffin.SCALE;
+            }
+            ++beltIdx;
         }
 
         /*
@@ -219,6 +315,7 @@ class Conveyor extends FlxGroup
         }
         */
 
+/*
         var beltIdx = 0;
         for (belt in belts) {
             belt.busyTimer = Math.max(0, belt.busyTimer - elapsed);
@@ -229,6 +326,7 @@ class Conveyor extends FlxGroup
             }
             ++beltIdx;
         }
+*/
 
         checkMuffins();
 	}

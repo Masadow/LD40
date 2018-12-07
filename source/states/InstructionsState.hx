@@ -5,7 +5,8 @@ import flixel.FlxSprite;
 import states.WelcomeState;
 import flixel.FlxG;
 import flixel.text.FlxText;
-import Sys;
+import flixel.util.FlxColor;
+import entities.Muffin;
 
 
 class InstructionsState extends FlxState
