@@ -23,7 +23,7 @@ typedef BaseSprites = {
 
 class Muffin extends FlxSpriteGroup
 {
-    public static var SCALE = 0.5;
+    public static var SCALE = 0.75;
     public static var BASE_HEIGHT = 225 * SCALE;
     private var combos : Array<ComboState>;
     private var onMistake : Void -> Void;
@@ -207,7 +207,7 @@ class Muffin extends FlxSpriteGroup
             }
             #if FLX_KEYBOARD
             var letter : FlxText = letters[idx];
-            letter.alpha = 255;
+//            letter.alpha = 255;
             this.combos.push({
                 letter: letter,
                 key: combo,

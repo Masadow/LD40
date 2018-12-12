@@ -28,13 +28,14 @@ class Conveyor extends FlxGroup
     private var lastPopped : Float;
     private var randomizer : FlxRandom;
     private var probabilityBoost : Float;
-    private static var SPEED = 100;
+    private static var SPEED = 130;
     private static var ANIM_SPEED_FACTOR = 15 / 162;
     private static var SPEEDUP_TIMER = 10;
     private static var SPEEDUP_FACTOR = 1.0;
     private static var BUSY_TIMEOUT = 1.5;
-    private static var GAP_SIZE = 250;
-    private static var BELT_COUNT = 2;
+    private static var GAP_SIZE = 330;
+    private static var BELT_COUNT = 3;
+    private static var BELT_Y_GAP = 30;
     private var maxCombo : Int;
     private var y : Float;
     private var height : Float;
@@ -64,7 +65,7 @@ class Conveyor extends FlxGroup
         // Position shadow
         x = 0;
         while (x < FlxG.width) {
-            var sprite = new FlxSprite(x, y + 185 * BELT_COUNT - 59, "assets/images/conveyor/belt_shadow.png");
+            var sprite = new FlxSprite(x, y + 185 * BELT_COUNT - 59 + (BELT_COUNT - 1) * BELT_Y_GAP, "assets/images/conveyor/belt_shadow.png");
             x += sprite.width;
             add(sprite);
         }
@@ -82,7 +83,7 @@ class Conveyor extends FlxGroup
 //                sprite.x -= (Main.global_scale * sprite.width) / 4;
 //                sprite.y -= (Main.global_scale * sprite.height) / 4;
                 x += sprite.width;
-                y_incr = sprite.height;
+                y_incr = sprite.height + BELT_Y_GAP;
                 add(sprite);
 //                convs.push(sprite);
             }
@@ -102,7 +103,7 @@ class Conveyor extends FlxGroup
             y += y_incr - 45;
 
             belts.push({
-                y: y - 10,
+                y: y - 10 - BELT_Y_GAP,
                 busyTimer: 0,
                 queue: 0,
                 muffins: new FlxTypedGroup<Muffin>(),

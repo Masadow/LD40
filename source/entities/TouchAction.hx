@@ -5,7 +5,7 @@ import flixel.FlxSprite;
 import flixel.util.FlxColor;
 
 class TouchAction extends FlxSprite {
-    public static var SIZE = 100;
+    public static var SIZE = 150;
 
     private var _touched : Bool;
     private var _key : Int;
@@ -22,6 +22,16 @@ class TouchAction extends FlxSprite {
     {
         super.update(elapsed);
         _touched = false;
+        #if FLX_MOUSE
+        if (FlxG.mouse.justReleased)
+        {
+                if (FlxG.mouse.x >= x && FlxG.mouse.x < x + SIZE
+                && FlxG.mouse.y >= y && FlxG.mouse.y < y + SIZE)
+                {
+                    _touched = true;
+                }
+        }
+        #end
         for (touch in FlxG.touches.list) {
             if (touch.justReleased)
             {
