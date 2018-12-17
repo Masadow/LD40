@@ -5,6 +5,7 @@ import entities.Conveyor;
 import entities.Muffin;
 import entities.Selector;
 import entities.UI;
+import entities.TouchAction;
 import flixel.FlxG;
 import states.GameOverState;
 import entities.Background;
@@ -51,7 +52,8 @@ class PlayState extends FlxState
 			}
 			#end
 			if (mox > mux && mox < mux + width && moy > muy && moy < muy + height) {
-				selector.select(muffin);
+				muffin.hitCombo(TouchAction.selected.key());
+//				selector.select(muffin);
 			}
 		}
 	}

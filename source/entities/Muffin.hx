@@ -323,14 +323,6 @@ class Muffin extends FlxSpriteGroup
                 hitCombo(PlayState.F_KEY);
             }
             #end
-            #if FLX_TOUCH
-            for (ab in UI.actionButton)
-            {
-                if (ab.touched()) {
-                    hitCombo(ab.key());
-                }
-            }
-            #end
         }
 	}
 

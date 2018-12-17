@@ -29,7 +29,7 @@ class UI extends FlxGroup {
         #end
         #if FLX_TOUCH
         actionButton = new Array<TouchAction>();
-        addTouch(50, 190, PlayState.A_KEY, FlxColor.RED);
+        addTouch(50, 190, PlayState.A_KEY, FlxColor.RED, true);
         addTouch(50, 390, PlayState.S_KEY, FlxColor.MAGENTA);
         addTouch(50, 590, PlayState.D_KEY, FlxColor.CYAN);
         addTouch(50, 790, PlayState.F_KEY, FlxColor.ORANGE);
@@ -55,8 +55,8 @@ class UI extends FlxGroup {
         add(txt);
     }
 
-    private function addTouch(x : Float, y : Float, key : Int, color : FlxColor) : Void {
-        var btn = new TouchAction(x, y, color, key);
+    private function addTouch(x : Float, y : Float, key : Int, color : FlxColor, selected : Bool = false) : Void {
+        var btn = new TouchAction(x, y, color, key, selected);
         actionButton.push(btn);
         add(btn);
     }
