@@ -33,8 +33,8 @@ class Conveyor extends FlxGroup
     private static var SPEEDUP_TIMER = 10;
     private static var SPEEDUP_FACTOR = 1.0;
     private static var BUSY_TIMEOUT = 1.5;
-    private static var GAP_SIZE = 330;
-    private static var BELT_COUNT = 3;
+    private static var GAP_SIZE = 240;
+    private static var BELT_COUNT = 2;
     private static var BELT_Y_GAP = 30;
     private var maxCombo : Int;
     private var y : Float;
@@ -218,13 +218,13 @@ class Conveyor extends FlxGroup
             //Muffins with 0 x velocity are muffins completed
             if (muffin.velocity.x > 0) {
                 if (!fillGap && leftMuffin != null) {
-                    if (leftMuffin.getNextCombo() == muffin.getNextCombo()) {
+//                    if (leftMuffin.getNextCombo() == muffin.getNextCombo()) {
                         //Same muffin should be next to each other
                         if (muffin.x - leftMuffin.x > (GAP_SIZE + 5) * Muffin.SCALE) {
                             //Otherwise, we'll move all the muffins at the right to the left to fill the gap
                             fillGap = true;
                         }
-                    }
+//                    }
                 }
                 if (fillGap) {
                     muffin.x -= GAP_SIZE * Muffin.SCALE;
