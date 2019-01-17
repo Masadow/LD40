@@ -7,6 +7,7 @@ import flixel.FlxG;
 import entities.UI;
 import flixel.text.FlxText;
 import states.PlayState;
+import entities.TouchAction;
 
 typedef ComboState = {
     letter: FlxText,
@@ -34,7 +35,8 @@ class Muffin extends FlxSpriteGroup
     private var letters : Array<FlxText>;
     private var toppins : Array<FlxSprite>;
 
-    private var selected : Bool;
+    public var selected : Bool;
+    private var displaySelected : Bool;
 
 	public function new()
 	{
@@ -42,6 +44,7 @@ class Muffin extends FlxSpriteGroup
 
         //Build the muffin from bottom to top
         selected = false;
+        displaySelected = false;
         selectorSprite = new FlxSprite(10, 160, "assets/images/muffin/unselected.png");
 
         baseSprites = {
@@ -306,6 +309,17 @@ class Muffin extends FlxSpriteGroup
 	{
 		super.update(elapsed);
 
+		selected = getNextCombo() == TouchAction.selected.key();
+        if (selected != displaySelected)
+        {
+            if (selected)
+            {
+                select();
+            } else {
+                unselect();
+            }
+        }
+
         if (y + 150 < 0) {
             kill();
         } else if (selected) {
@@ -328,14 +342,14 @@ class Muffin extends FlxSpriteGroup
 
     public function select() {
         FlxG.sound.play("assets/sounds/select_muffin.wav");
-        selected = true;
+        displaySelected = true;
         selectorSprite.loadGraphic("assets/images/muffin/selected.png");
         headSprite.loadGraphic("assets/images/muffin/head_selected.png");
         position_sprites();
     }
 
     public function unselect() {
-        selected = false;
+        displaySelected = false;
         selectorSprite.loadGraphic("assets/images/muffin/unselected.png");
         headSprite.loadGraphic("assets/images/muffin/head.png");
         position_sprites();
