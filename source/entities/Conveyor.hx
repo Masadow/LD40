@@ -36,6 +36,7 @@ class Conveyor extends FlxGroup
     private static var GAP_SIZE = 240;
     private static var BELT_COUNT = 2;
     private static var BELT_Y_GAP = 30;
+    private static var SPAWN_INTERVAL = 2;
     private var maxCombo : Int;
     private var y : Float;
     private var height : Float;
@@ -122,15 +123,15 @@ class Conveyor extends FlxGroup
         height = y - this.y;
     }
 
-    private function popOnBelt(beltId : Int) : Void {
+    private function popOnBelt(belt : Belt) : Void {
         var comboSize : Int= cast Math.min(randomizer.weightedPick([60, 30, 10]) + 1, maxCombo);
         var combo : Array<Int> = [PlayState.A_KEY, PlayState.S_KEY, PlayState.D_KEY, PlayState.F_KEY];
 
         //Prevents three muffins with same combo in a row
-        if (belts[beltId].muffins.countLiving() >= 2) {
+        if (belt.muffins.countLiving() >= 2) {
             var muffin_1 : Muffin = null;
             var muffin_2 : Muffin = null;
-            belts[beltId].muffins.forEachAlive(function (m : FlxBasic) {
+            belt.muffins.forEachAlive(function (m : FlxBasic) {
                 if (muffin_1 == null) {
                     muffin_1 = cast m;
                 } else if (muffin_2 == null) {
@@ -146,7 +147,6 @@ class Conveyor extends FlxGroup
             combo.splice(randomizer.int(0, combo.length - 1), 1);
         }
         randomizer.shuffle(combo);
-        var belt = belts[beltId];
         belt.lastPopped = cast belt.muffins.recycle(Muffin);
         belt.lastPopped.init(belt.y - Muffin.BASE_HEIGHT, belt.speed, combo, popMuffin);
         //Sort muffins from left to right
@@ -287,25 +287,25 @@ class Conveyor extends FlxGroup
             }
         }
 
-        /*
-        if (lastPopped > 0.5) {
-            lastPopped -= 0.5;
-            popMuffins();
+/*
+        if (lastPopped > SPAWN_INTERVAL) {
+            lastPopped -= SPAWN_INTERVAL;
+            for (belt in belts) {
+                popOnBelt(belt);
+            }
         }
-        */
+*/
 
-        var beltIdx = 0;
         for (belt in belts) {
             checkGaps(belt);
             checkAutoremove(belt);
             if (belt.lastPopped == null) {
-                popOnBelt(beltIdx);
-            } else if (belt.lastPopped.x > 0) {
+                popOnBelt(belt);
+            } else if (belt.lastPopped.x > 0 || belt.lastPopped.velocity.x == 0) {
                 var x_ref = belt.lastPopped.x;
-                popOnBelt(beltIdx);
+                popOnBelt(belt);
                 belt.lastPopped.x = x_ref - GAP_SIZE * Muffin.SCALE;
             }
-            ++beltIdx;
         }
 
         /*

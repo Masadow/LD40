@@ -4,35 +4,31 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
+import states.PlayState;
 
 class TouchAction extends FlxSprite {
     public static var SIZE = 150;
 
+    private var _idx : Int;
     private var _color : FlxColor;
     private var _key : Int;
     public static var selected : TouchAction = null;
+    private static var _colors : Array<FlxColor> = [FlxColor.RED, FlxColor.MAGENTA, FlxColor.CYAN, FlxColor.ORANGE];
+    private static var _keys : Array<Int> = [PlayState.A_KEY, PlayState.S_KEY, PlayState.D_KEY, PlayState.F_KEY];
 
-    public function new(x : Float, y : Float, color : FlxColor, keycode : Int, isSelected : Bool = false)
+    public function new(x : Float, y : Float)
     {
         super(x, y);
-        _color = color;
-        if (isSelected)
-        {
-            selected = this;
-        }
-        makeSphere(isSelected);
-        _key = keycode;
+        _idx = 0;
+        makeSphere();
+        selected = this;
     }
 
-    private function makeSphere(isSelected : Bool)
+    private function makeSphere()
     {
-        makeGraphic(SIZE, SIZE, FlxColor.TRANSPARENT, false, "touch_" + _color + isSelected);
+        makeGraphic(SIZE, SIZE, FlxColor.TRANSPARENT, false, "touch_" + _colors[_idx]);
 
-        if (isSelected) {
-            FlxSpriteUtil.drawCircle(this, -1, -1, 0, _color, {color: FlxColor.BLACK, thickness: 5});
-        } else {
-            FlxSpriteUtil.drawCircle(this, -1, -1, 0, _color);
-        }
+        FlxSpriteUtil.drawCircle(this, -1, -1, 0, _colors[_idx]);
     }
 
     override public function update(elapsed:Float):Void
@@ -44,11 +40,8 @@ class TouchAction extends FlxSprite {
                 if (FlxG.mouse.x >= x && FlxG.mouse.x < x + SIZE
                 && FlxG.mouse.y >= y && FlxG.mouse.y < y + SIZE)
                 {
-                    if (selected != null) {
-                        selected.makeSphere(false);
-                    }
-                    selected = this;
-                    makeSphere(true);
+                    _idx = ++_idx > 3 ? 0 : _idx;
+                    makeSphere();
                 }
         }
         #end
@@ -58,11 +51,8 @@ class TouchAction extends FlxSprite {
                 if (touch.x >= x && touch.x < x + SIZE
                 && touch.y >= y && touch.y < y + SIZE)
                 {
-                   if (selected != null) {
-                        selected.makeSphere(false);
-                    }
-                    selected = this;
-                    makeSphere(true);
+                    _idx = ++_idx > 3 ? 0 : _idx;
+                    makeSphere();
                 }
             }
         }
@@ -70,6 +60,6 @@ class TouchAction extends FlxSprite {
 
     public function key() : Int
     {
-        return _key;
+        return _keys[_idx];
     }
 }

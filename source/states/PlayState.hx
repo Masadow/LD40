@@ -45,12 +45,6 @@ class PlayState extends FlxState
 				muy = muffin.y,
 				width = 200 * Muffin.SCALE,
 				height = 220 * Muffin.SCALE;
-			#if FLX_TOUCH
-			if (mox < 200)
-			{
-				return ;
-			}
-			#end
 			if (mox > mux && mox < mux + width && moy > muy && moy < muy + height) {
 				muffin.hitCombo(TouchAction.selected.key());
 //				selector.select(muffin);
