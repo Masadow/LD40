@@ -193,7 +193,7 @@ class Conveyor extends FlxGroup
                     FlxG.sound.play("assets/sounds/loose_life.wav");
                     muffin.alive = false;
                     muffin.velocity.x = 0;
-                    UI.health -= 1;
+//                    UI.health -= 1;
                     FlxG.camera.shake(0.01, 0.2);
                 }
             });
