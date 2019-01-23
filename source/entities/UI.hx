@@ -14,23 +14,14 @@ class UI extends FlxGroup {
     public static var health : Int;
     public var scoreTxt : FlxText;
     public var healthPoints : Array<FlxSprite>;
-    public static var actionButton : Array<TouchAction>;
 
     public function new() {
         super();
 
         addBackground();
 
-        #if FLX_KEYBOARD
-        addAction(225, 32, String.fromCharCode(PlayState.A_KEY));
-        addAction(465, 32, String.fromCharCode(PlayState.S_KEY));
-        addAction(705, 32, String.fromCharCode(PlayState.D_KEY));
-        addAction(945, 32, String.fromCharCode(PlayState.F_KEY));
-        #end
-        #if FLX_TOUCH
-        actionButton = new Array<TouchAction>();
-        addTouch(50, 790);
-        #end
+        var btn = new TouchAction(50, 790);
+        add(btn);
 
         UI.score = 0;
         addScore();
@@ -43,19 +34,6 @@ class UI extends FlxGroup {
     private function addBackground() {
         var bg = new FlxSprite(0, 0, "assets/images/ui_frame.png");
         add(bg);
-    }
-
-    private function addAction(x : Float, y : Float, letter : String) : Void {
-        var txt = new FlxText(x, y, 60, letter + "\n ");
-        txt.color = FlxColor.WHITE;
-        txt.size = 42;
-        add(txt);
-    }
-
-    private function addTouch(x : Float, y : Float) : Void {
-        var btn = new TouchAction(x, y);
-        actionButton.push(btn);
-        add(btn);
     }
 
     function addScore() {

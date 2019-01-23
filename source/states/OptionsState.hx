@@ -98,16 +98,6 @@ class OptionsState extends FlxState
         d_rect = new FlxRect(875, 380, 100, 100);
         f_rect = new FlxRect(985, 380, 100, 100);
 
-        aSprite = new FlxText(a_rect.x + 25, a_rect.y + 20, a_rect.width, String.fromCharCode(PlayState.A_KEY), 56);
-        sSprite = new FlxText(s_rect.x + 25, s_rect.y + 20, s_rect.width, String.fromCharCode(PlayState.S_KEY), 56);
-        dSprite = new FlxText(d_rect.x + 25, d_rect.y + 20, d_rect.width, String.fromCharCode(PlayState.D_KEY), 56);
-        fSprite = new FlxText(f_rect.x + 25, f_rect.y + 20, f_rect.width, String.fromCharCode(PlayState.F_KEY), 56);
-
-        add(aSprite);
-        add(sSprite);
-        add(dSprite);
-        add(fSprite);
-
         arrow = new FlxSprite(0, 0, "assets/images/screens/arrow.png");
         arrow.x = 920 - (Main.global_scale * arrow.width) / 4;
         arrow.y = 300 - (Main.global_scale * arrow.height) / 4;
@@ -121,56 +111,6 @@ class OptionsState extends FlxState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-
-        #if FLX_KEYBOARD
-        var key = FlxG.keys.firstJustPressed();
-        if ((FlxG.mouse.justPressed || key != -1) && editing >= 0) {
-            if (key != -1) {
-                if (editing == 0 ) {
-                    PlayState.A_KEY = key;
-                    aSprite.text = String.fromCharCode(key);
-                }
-                else if (editing == 1 ) {
-                    PlayState.S_KEY = key;
-                    sSprite.text = String.fromCharCode(key);
-                }
-                else if (editing == 2 ) {
-                    PlayState.D_KEY = key;
-                    dSprite.text = String.fromCharCode(key);
-                }
-                else if (editing == 3 ) {
-                    PlayState.F_KEY = key;
-                    fSprite.text = String.fromCharCode(key);
-                }
-            }
-            editing = -1;
-            flicking.stop();
-        }
-        else if (a_rect.containsPoint(FlxG.mouse.getPosition())) {
-            if (FlxG.mouse.justReleased) {
-                flicking = FlxFlicker.flicker(aSprite, 0, 0.2);
-                editing = 0;
-            }
-        }
-        else if (s_rect.containsPoint(FlxG.mouse.getPosition())) {
-            if (FlxG.mouse.justReleased) {
-                flicking = FlxFlicker.flicker(sSprite, 0, 0.2);
-                editing = 1;
-            }
-        }
-        else if (d_rect.containsPoint(FlxG.mouse.getPosition())) {
-            if (FlxG.mouse.justReleased) {
-                flicking = FlxFlicker.flicker(dSprite, 0, 0.2);
-                editing = 2;
-            }
-        }
-        else if (f_rect.containsPoint(FlxG.mouse.getPosition())) {
-            if (FlxG.mouse.justReleased) {
-                flicking = FlxFlicker.flicker(fSprite, 0, 0.2);
-                editing = 3;
-            }
-        }
-        #end
 
         arrow.alpha = 0;
         #if FLX_MOUSE

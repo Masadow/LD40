@@ -8,12 +8,7 @@ import entities.UI;
 import flixel.text.FlxText;
 import states.PlayState;
 import entities.TouchAction;
-
-typedef ComboState = {
-    letter: FlxText,
-    key: Int,
-    done: Bool
-}
+import flixel.util.FlxColor;
 
 typedef BaseSprites = {
     left: FlxSprite,
@@ -26,17 +21,19 @@ class Muffin extends FlxSpriteGroup
 {
     public static var SCALE = 0.75;
     public static var BASE_HEIGHT = 225 * SCALE;
-    private var combos : Array<ComboState>;
+    private var _color : FlxColor;
     private var onMistake : Void -> Void;
 
     private var headSprite : FlxSprite;
     private var selectorSprite : FlxSprite;
     private var baseSprites : BaseSprites;
     private var letters : Array<FlxText>;
-    private var toppins : Array<FlxSprite>;
+    private var toppin : FlxSprite;
 
     public var selected : Bool;
     private var displaySelected : Bool;
+
+    private var path_step : Int;
 
 	public function new()
 	{
@@ -56,11 +53,7 @@ class Muffin extends FlxSpriteGroup
 
         headSprite = new FlxSprite(0, 0, "assets/images/muffin/head.png");
 
-        toppins = [
-            new FlxSprite(15, -60),
-            new FlxSprite(15, -90),
-            new FlxSprite(15, -110),
-        ];
+        toppin = new FlxSprite(15, -60);
 
         add(selectorSprite);
         add(baseSprites.left);
@@ -69,31 +62,11 @@ class Muffin extends FlxSpriteGroup
         add(baseSprites.right);
         add(headSprite);
 
-        #if FLX_KEYBOARD
-        letters = [
-            new FlxText(0, 155, 64, String.fromCharCode(PlayState.A_KEY), 32),
-            new FlxText(0, 155, 64, String.fromCharCode(PlayState.S_KEY), 32),
-            new FlxText(0, 155, 64, String.fromCharCode(PlayState.D_KEY), 32),
-            new FlxText(0, 155, 64, String.fromCharCode(PlayState.F_KEY), 32)
-        ];
-        for (letter in letters) {
-            letter.alpha = 0;
-            add(letter);
-        }
-        #end
-
-        var scaleMultiplier = 1.;
-        for (toppin in toppins) {
-            toppin.loadGraphic("assets/images/muffin/topping.png", true, 169, 109);
-            toppin.animation.add("run", [4, 6, 8, 1, 5, 9, 12, 13, 2, 0, 10, 14, 16, 17, 18, 20, 21, 22, 3], 15, false);
-            toppin.animation.add("idle", [7], 1, false);
-            toppin.animation.play("idle");
-            toppin.scale.set(scaleMultiplier, scaleMultiplier);
-
-            add(toppin);
-
-            scaleMultiplier *= 0.75;
-        }
+        toppin.loadGraphic("assets/images/muffin/topping.png", true, 169, 109);
+        toppin.animation.add("run", [4, 6, 8, 1, 5, 9, 12, 13, 2, 0, 10, 14, 16, 17, 18, 20, 21, 22, 3], 15, false);
+        toppin.animation.add("idle", [7], 1, false);
+        toppin.animation.play("idle");
+        add(toppin);
 
         position_sprites();
 	}
@@ -143,165 +116,51 @@ class Muffin extends FlxSpriteGroup
         y = saveY;
     }
 
-    private function get_combo_color(combo : FlxKey) : String {
-        if (combo == PlayState.A_KEY) {
+    private function _get_color() : String {
+        if (_color == FlxColor.RED) {
             return "red";
-        } else if (combo == PlayState.S_KEY) {
+        } else if (_color == FlxColor.MAGENTA) {
             return "pink";
-        } else if (combo == PlayState.D_KEY) {
+        } else if (_color == FlxColor.CYAN) {
             return "blue";
-        } else if (combo == PlayState.F_KEY) {
+        } else if (_color == FlxColor.ORANGE) {
             return "yellow";
         }
         return "";
     }
 
-    public function init(Y:Float, speed:Float, combos:Array<FlxKey>, onMistake : Void -> Void) : Void {
-        x = -130;
-        y = Y;
+    public function init(speed:Float, newColor:FlxColor, onMistake : Void -> Void) : Void {
+        _color = newColor;
 
         velocity.y = 0;
 
-        #if FLX_KEYBOARD
-        for (letter in letters) {
-            letter.alpha = 0;
-        }
-        #end
+        path_step = 1;
 
-        for (toppin in toppins) {
-            toppin.animation.play("idle");
-        }
+        toppin.animation.play("idle");
 
         this.onMistake = onMistake;
 
         velocity.x = speed;
 
-        this.combos = new Array<ComboState>();
-        if (combos.length == 1) {
-            baseSprites.left.loadGraphic("assets/images/muffin/base/left_"+ get_combo_color(combos[0]) +".png");
-            baseSprites.mid_left.loadGraphic("assets/images/muffin/base/mid_left_"+ get_combo_color(combos[0]) +".png");
-            baseSprites.mid_right.loadGraphic("assets/images/muffin/base/mid_right_"+ get_combo_color(combos[0]) +".png");
-            baseSprites.right.loadGraphic("assets/images/muffin/base/right_"+ get_combo_color(combos[0]) +".png");
-        } else if (combos.length == 2) {
-            baseSprites.left.loadGraphic("assets/images/muffin/base/left_"+ get_combo_color(combos[0]) +".png");
-            baseSprites.mid_left.loadGraphic("assets/images/muffin/base/mid_left_"+ get_combo_color(combos[0]) +".png");
-            baseSprites.mid_right.loadGraphic("assets/images/muffin/base/mid_right_"+ get_combo_color(combos[1]) +".png");
-            baseSprites.right.loadGraphic("assets/images/muffin/base/right_"+ get_combo_color(combos[1]) +".png");
-        } else if (combos.length == 3) {
-            baseSprites.left.loadGraphic("assets/images/muffin/base/left_"+ get_combo_color(combos[0]) +".png");
-            baseSprites.mid_left.loadGraphic("assets/images/muffin/base/mid_left_"+ get_combo_color(combos[1]) +".png");
-            baseSprites.mid_right.loadGraphic("assets/images/muffin/base/mid_right_"+ get_combo_color(combos[1]) +".png");
-            baseSprites.right.loadGraphic("assets/images/muffin/base/right_"+ get_combo_color(combos[2]) +".png");
-        }
+        baseSprites.left.loadGraphic("assets/images/muffin/base/left_"+ _get_color() +".png");
+        baseSprites.mid_left.loadGraphic("assets/images/muffin/base/mid_left_"+ _get_color() +".png");
+        baseSprites.mid_right.loadGraphic("assets/images/muffin/base/mid_right_"+ _get_color() +".png");
+        baseSprites.right.loadGraphic("assets/images/muffin/base/right_"+ _get_color() +".png");
 
-        position_sprites();
-
-        var x = 0.;
-        for (combo in combos) {
-            var idx = 0;
-            if (combo == PlayState.A_KEY) {
-                idx = 0;
-            } else if (combo == PlayState.S_KEY) {
-                idx = 1;
-            } else if (combo == PlayState.D_KEY) {
-                idx = 2;
-            } else if (combo == PlayState.F_KEY) {
-                idx = 3;
-            }
-            #if FLX_KEYBOARD
-            var letter : FlxText = letters[idx];
-//            letter.alpha = 255;
-            this.combos.push({
-                letter: letter,
-                key: combo,
-                done: false
-            });
-            #else
-            this.combos.push({
-                letter: null,
-                key: combo,
-                done: false
-            });
-            #end
-        }
-
-        #if FLX_KEYBOARD
-        positionLetters();
-        #end
-    }
-
-    private function drawCombo(idx : Int) {
-//        toppins[idx].animation.play("run");
-        if (combos.length == 1) {
-            baseSprites.left.loadGraphic("assets/images/muffin/base/left_white.png");
-            baseSprites.mid_left.loadGraphic("assets/images/muffin/base/mid_left_white.png");
-            baseSprites.mid_right.loadGraphic("assets/images/muffin/base/mid_right_white.png");
-            baseSprites.right.loadGraphic("assets/images/muffin/base/right_white.png");
-        } else if (combos.length == 2) {
-            if (idx == 0) {
-                baseSprites.left.loadGraphic("assets/images/muffin/base/left_white.png");
-                baseSprites.mid_left.loadGraphic("assets/images/muffin/base/mid_left_white.png");
-            } else {
-                baseSprites.mid_right.loadGraphic("assets/images/muffin/base/mid_right_white.png");
-                baseSprites.right.loadGraphic("assets/images/muffin/base/right_white.png");
-            }
-        } else if (combos.length == 3) {
-            if (idx == 0) {
-                baseSprites.left.loadGraphic("assets/images/muffin/base/left_white.png");
-            } else if (idx == 1) {
-                baseSprites.mid_left.loadGraphic("assets/images/muffin/base/mid_left_white.png");
-                baseSprites.mid_right.loadGraphic("assets/images/muffin/base/mid_right_white.png");
-            } else {
-                baseSprites.right.loadGraphic("assets/images/muffin/base/right_white.png");
-            }
-        }
         position_sprites();
     }
 
-    public function hitCombo(key:Int) {
-        var i = 0;
-        for (combo in combos) {
-            if (combo.done) {
-                ++i;
-                continue;
-            }
-            if (combo.key == key) {
-                combo.done = true;
-                drawCombo(i);
-                if (i == combos.length - 1) {
-                    FlxG.sound.play(/*FlxG.random.bool() ? */"assets/sounds/right_cream.wav"/* : "assets/sounds/right_cream_yes.wav"*/);
-                } else {
-                    FlxG.sound.play("assets/sounds/combo_cream.wav");
-                }
-                break ;
-            } else {
-                FlxG.sound.play("assets/sounds/wrong_cream.wav");
-                this.onMistake();
-                return ;
-            }
-        }
-        if (i == combos.length - 1) {
-            UI.score += [10, 50, 100, 250][combos.length - 1];
+    public function hit(color:FlxColor) {
+        if (_color == color) {
+            UI.score += 10;
             unselect();
             velocity.y = -3 * velocity.x;
             velocity.x = 0;
-        }
-    }
-
-    override public function kill():Void {
-        super.kill();
-    }
-
-    public function positionLetters() {
-        if (combos.length == 1) {
-            combos[0].letter.x = -40;
-        } else if (combos.length == 2) {
-            combos[0].letter.x = -65;
-            combos[1].letter.x = -15;
-        } else if (combos.length == 3) {
-            combos[0].letter.x = -75;
-            combos[1].letter.x = -40;
-            combos[2].letter.x = -0;
+            toppin.animation.play("run");
+            FlxG.sound.play(FlxG.random.bool() ? "assets/sounds/right_cream.wav" : "assets/sounds/right_cream_yes.wav");
+        } else {
+            FlxG.sound.play("assets/sounds/wrong_cream.wav");
+            this.onMistake();
         }
     }
 
@@ -309,7 +168,21 @@ class Muffin extends FlxSpriteGroup
 	{
 		super.update(elapsed);
 
-		selected = getNextCombo() == TouchAction.selected.key();
+		for (touch in FlxG.touches.list) {
+			if (touch.justPressed) {
+                if (velocity.x > 0) {
+                    var mox = touch.x,
+                        moy = touch.y,
+                        width = 200 * Muffin.SCALE,
+                        height = 220 * Muffin.SCALE;
+                    if (mox > x && mox < x + width && moy > y && moy < y + height) {
+                        hit(TouchAction.currentColor);
+                    }
+                }
+            }
+        }
+
+		selected = _color == TouchAction.currentColor;
         if (selected != displaySelected)
         {
             if (selected)
@@ -322,22 +195,40 @@ class Muffin extends FlxSpriteGroup
 
         if (y + 150 < 0) {
             kill();
-        } else if (selected) {
-            #if FLX_KEYBOARD
-            if (FlxG.keys.anyJustPressed([PlayState.A_KEY])) {
-                hitCombo(PlayState.A_KEY);
-            }
-            if (FlxG.keys.anyJustPressed([PlayState.S_KEY])) {
-                hitCombo(PlayState.S_KEY);
-            }
-            if (FlxG.keys.anyJustPressed([PlayState.D_KEY])) {
-                hitCombo(PlayState.D_KEY);
-            }
-            if (FlxG.keys.anyJustPressed([PlayState.F_KEY])) {
-                hitCombo(PlayState.F_KEY);
-            }
-            #end
+            return ;
         }
+        
+        if (velocity.x > 0 && x > GameConst.CUPCAKES_PATH[path_step].x) {
+            y += x - GameConst.CUPCAKES_PATH[path_step].x;
+            x = GameConst.CUPCAKES_PATH[path_step].x;
+            if (++path_step == GameConst.CUPCAKES_PATH.length) {
+                kill();
+                return ;
+            }
+            velocity.y = velocity.x;
+            velocity.x = 0;
+        } else if (velocity.y > 0 && y > GameConst.CUPCAKES_PATH[path_step].y) {
+            var next_x = GameConst.CUPCAKES_PATH[path_step + 1].x;
+            if (next_x > x) {
+                x += y - GameConst.CUPCAKES_PATH[path_step].y;
+                y = GameConst.CUPCAKES_PATH[path_step].y;
+                path_step++;
+                velocity.x = velocity.y;
+                velocity.y = 0;
+            } else {
+                x -= y - GameConst.CUPCAKES_PATH[path_step].y;
+                y = GameConst.CUPCAKES_PATH[path_step].y;
+                path_step++;
+                velocity.x = -velocity.y;
+                velocity.y = 0;
+            }
+        } else if (velocity.x < 0 && x < GameConst.CUPCAKES_PATH[path_step].x) {
+            y += GameConst.CUPCAKES_PATH[path_step].x - x;
+            x = GameConst.CUPCAKES_PATH[path_step].x;
+            path_step++;
+            velocity.y = -velocity.x;
+            velocity.x = 0;
+        } 
 	}
 
     public function select() {
@@ -353,10 +244,5 @@ class Muffin extends FlxSpriteGroup
         selectorSprite.loadGraphic("assets/images/muffin/unselected.png");
         headSprite.loadGraphic("assets/images/muffin/head.png");
         position_sprites();
-    }
-
-    public function getNextCombo() : Int
-    {
-        return combos[0].key;
     }
 }
