@@ -20,8 +20,8 @@ class UI extends FlxGroup {
 
         addBackground();
 
-        var btn = new TouchAction(50, 790);
-        add(btn);
+//        var btn = new TouchAction(50, 790);
+//        add(btn);
 
         UI.score = 0;
         addScore();

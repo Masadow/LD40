@@ -4,6 +4,7 @@ import flixel.FlxGame;
 import openfl.display.Sprite;
 import states.InstructionsState;
 import flixel.system.FlxAssets;
+import openfl.display.FPS;
 
 class Main extends Sprite
 {
@@ -14,5 +15,6 @@ class Main extends Sprite
 		super();
 		FlxAssets.FONT_DEFAULT = "assets/fonts/Vanilla.ttf";
 		addChild(new FlxGame(1920, 1080, InstructionsState, 1, 60, 60, true, false));
+		addChild(new FPS(10, 10, 0xffffff));
 	}
 }

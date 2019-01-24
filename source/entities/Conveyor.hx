@@ -5,6 +5,7 @@ import flixel.FlxG;
 import flixel.math.FlxRandom;
 import flixel.group.FlxGroup;
 import entities.Muffin;
+import entities.UI;
 import flixel.util.FlxColor;
 import flixel.FlxBasic;
 import entities.ResetXSprite;
@@ -44,7 +45,7 @@ class Conveyor extends FlxGroup
     private var speed : Float;
 
     private var muffins : FlxTypedGroup<Muffin>;
-    private var lastPoppedMuffin : Muffin;
+    private var sortedMuffins : List<Muffin>;
 
 
 	public function new(?Y:Float = 0)
@@ -57,7 +58,7 @@ class Conveyor extends FlxGroup
         speed = GameConst.SPEED;
 
         muffins = new FlxTypedGroup<Muffin>();
-        lastPoppedMuffin = null;
+        sortedMuffins = new List<Muffin>();
 
         var conv = new FlxSprite(0, 0);
         conv.makeGraphic(1920, 1080, FlxColor.TRANSPARENT);
@@ -162,13 +163,45 @@ class Conveyor extends FlxGroup
     }
 
     private function popMuffin() : Void {
-        var color = randomizer.getObject(GameConst.COLORS);
-        lastPoppedMuffin = cast muffins.recycle(Muffin);
-        lastPoppedMuffin.init(speed, color, onMistake);
-        lastPoppedMuffin.x = GameConst.CUPCAKES_PATH[0].x;
-        lastPoppedMuffin.y = GameConst.CUPCAKES_PATH[0].y;
-        //Sort muffins from left to right
-        muffins.sort(function (_:Int, left:FlxBasic, right:FlxBasic) return (cast left).x - (cast right).x);
+        var randoms = [
+            [1, 2],
+            [3, 5],
+            [6, 8]
+        ];
+        var islong = randomizer.weightedPick([0.3, 0.5, 0.2]);
+        var count = randomizer.int(randoms[islong][0], randoms[islong][1]);
+
+        //Pick the next color
+        var i = 0;
+        if (sortedMuffins.length == 0) {
+            i = randomizer.int(0, GameConst.COLORS.length - 1);
+        } else {
+            var idx = randomizer.int(0, GameConst.COLORS.length - 2);
+            for (color in GameConst.COLORS) {
+                if (GameConst.COLORS[i] != sortedMuffins.first().getColor()) {
+                    if (idx > 0) {
+                        idx--;
+                    } else {
+                        break ;
+                    }
+                }
+                ++i;
+            }
+        }
+        var color : FlxColor = GameConst.COLORS[i];
+
+        while (count-- != 0) {
+            var muffin : Muffin = cast muffins.recycle(Muffin);
+            muffin.init(speed, color, onMistake);
+            muffin.x = sortedMuffins.length == 0 ?
+                GameConst.CUPCAKES_PATH[0].x
+                :
+                sortedMuffins.first().x - GameConst.CUPCAKES_GAP;
+            muffin.y = GameConst.CUPCAKES_PATH[0].y;
+            //Sort muffins from left to right
+//            muffins.sort(function (_:Int, left:FlxBasic, right:FlxBasic) return (cast left).x - (cast right).x);
+            sortedMuffins.push(muffin);
+        }
     }
 
     public function onMistake() : Void {
@@ -177,7 +210,8 @@ class Conveyor extends FlxGroup
 
     private function checkMuffins() : Void
     {
-        muffins.forEachAlive(function (muffin : Muffin) {
+        for (muffin in sortedMuffins)
+        {
             if (muffin.x >FlxG.width - 130) {
                 FlxG.sound.play("assets/sounds/loose_life.wav");
                 muffin.kill();
@@ -185,13 +219,7 @@ class Conveyor extends FlxGroup
 //                    UI.health -= 1;
                 FlxG.camera.shake(0.01, 0.2);
             }
-        });
-    }
-
-    public function forEachMuffin(callback : Muffin -> FlxPointer -> Void, pointer : FlxPointer) {
-        muffins.forEachAlive(function (basic : FlxBasic) {
-            callback(cast basic, pointer);
-        });
+        }
     }
 
     public function checkGaps(belt : Belt)
@@ -223,6 +251,51 @@ class Conveyor extends FlxGroup
 	{
 		super.update(elapsed);
 
+        //Remove all killed muffins
+        sortedMuffins = sortedMuffins.filter(function (m : Muffin) {
+            return m.alive;
+        });
+
+        for (touch in FlxG.touches.list) {
+            if (touch.justReleased) {
+                var good = true;
+                var color : FlxColor = FlxColor.TRANSPARENT;
+                var touched = new List<Muffin>();
+                for (muffin in sortedMuffins) {
+                    if (muffin.selected) {
+                        muffin.unselect();
+                        touched.push(muffin);
+                        if (color != FlxColor.TRANSPARENT && color != muffin.getColor()) {
+                            good = false;
+                        }
+                        color = muffin.getColor();
+                    }
+                }
+                if (good && touched.length > 0) {
+                    //Then no mistakes have been done
+                    for (muffin in touched) {
+                        muffin.hit();
+                    }
+                    UI.score += touched.length * touched.length * 10;
+                    FlxG.sound.play(FlxG.random.bool() ? "assets/sounds/right_cream.wav" : "assets/sounds/right_cream_yes.wav");
+                } else {
+                    FlxG.sound.play("assets/sounds/wrong_cream.wav");
+                    UI.score = Std.int(Math.max(0, UI.score - touched.length * 10));
+                }
+            } else if (touch.pressed) {
+                for (muffin in sortedMuffins) {
+                    var mox = touch.x,
+                        moy = touch.y,
+                        width = muffin.area.width * Muffin.SCALE,
+                        height = muffin.area.height * Muffin.SCALE;
+                    if (mox > muffin.area.x && mox < muffin.area.x + width && moy > muffin.area.y && moy < muffin.area.y + height) {
+                        muffin.select();
+                    }
+                }
+            }
+        }
+
+
         lastPopped += elapsed;
         elapsedTotal += elapsed;
         timerBeforeSpeedUp -= elapsed;
@@ -243,12 +316,10 @@ class Conveyor extends FlxGroup
 */
 
 //            checkGaps(belt);
-        if (lastPoppedMuffin == null) {
+        if (sortedMuffins.length == 0) {
             popMuffin();
-        } else if (lastPoppedMuffin.x > 0 || lastPoppedMuffin.velocity.x == 0) {
-            var x_ref = lastPoppedMuffin.x;
+        } else if (sortedMuffins.first().x > 0) {
             popMuffin();
-            lastPoppedMuffin.x = x_ref - GAP_SIZE * Muffin.SCALE;
         }
 
         checkMuffins();

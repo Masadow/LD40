@@ -2,13 +2,11 @@ package entities;
 
 import flixel.group.FlxSpriteGroup;
 import flixel.FlxSprite;
-import flixel.input.keyboard.FlxKey;
 import flixel.FlxG;
-import entities.UI;
 import flixel.text.FlxText;
-import states.PlayState;
-import entities.TouchAction;
 import flixel.util.FlxColor;
+import flixel.util.FlxSpriteUtil;
+import flixel.math.FlxPoint;
 
 typedef BaseSprites = {
     left: FlxSprite,
@@ -19,7 +17,7 @@ typedef BaseSprites = {
 
 class Muffin extends FlxSpriteGroup
 {
-    public static var SCALE = 0.75;
+    public static var SCALE = GameConst.CUPCAKE_SCALE;
     public static var BASE_HEIGHT = 225 * SCALE;
     private var _color : FlxColor;
     private var onMistake : Void -> Void;
@@ -34,6 +32,9 @@ class Muffin extends FlxSpriteGroup
     private var displaySelected : Bool;
 
     private var path_step : Int;
+
+    private var dimensions : FlxPoint;
+    public var area : FlxSprite;
 
 	public function new()
 	{
@@ -67,6 +68,16 @@ class Muffin extends FlxSpriteGroup
         toppin.animation.add("idle", [7], 1, false);
         toppin.animation.play("idle");
         add(toppin);
+
+        dimensions = new FlxPoint(200, 220);
+
+        area = new FlxSprite(0, 0);
+        area.makeGraphic(Std.int(dimensions.x), Std.int(dimensions.y), FlxColor.TRANSPARENT);
+        FlxSpriteUtil.drawRect(area, 30, 0, 200 - 60, 220, FlxColor.TRANSPARENT, {
+            thickness: 3,
+            color: FlxColor.WHITE
+        });
+        add(area);
 
         position_sprites();
 	}
@@ -112,8 +123,16 @@ class Muffin extends FlxSpriteGroup
         selectorSprite.x = SCALE * selectorOffsetX;
         selectorSprite.y = SCALE * selectorOffsetY;
 
+        area.x = -15;
+        area.y = -15;
+        area.scale.set(SCALE, SCALE);
+
         x = saveX;
         y = saveY;
+    }
+
+    public function getColor() : FlxColor {
+        return _color;
     }
 
     private function _get_color() : String {
@@ -150,27 +169,23 @@ class Muffin extends FlxSpriteGroup
         position_sprites();
     }
 
-    public function hit(color:FlxColor) {
-        if (_color == color) {
-            UI.score += 10;
-            unselect();
-            velocity.y = -3 * velocity.x;
-            velocity.x = 0;
-            toppin.animation.play("run");
-            FlxG.sound.play(FlxG.random.bool() ? "assets/sounds/right_cream.wav" : "assets/sounds/right_cream_yes.wav");
-        } else {
-            FlxG.sound.play("assets/sounds/wrong_cream.wav");
-            this.onMistake();
-        }
+    public function hit() {
+        unselect();
+        velocity.y = -3 * GameConst.SPEED;
+        velocity.x = 0;
+        toppin.animation.play("run");
+        alive = false; //No longer alive but still update to go to heaven
+//            this.onMistake();
     }
 
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
 
-		for (touch in FlxG.touches.list) {
-			if (touch.justPressed) {
-                if (velocity.x > 0) {
+        if (alive) {
+            /*
+            for (touch in FlxG.touches.list) {
+                if (touch.pressed) {
                     var mox = touch.x,
                         moy = touch.y,
                         width = 200 * Muffin.SCALE,
@@ -180,16 +195,49 @@ class Muffin extends FlxSpriteGroup
                     }
                 }
             }
-        }
 
-		selected = _color == TouchAction.currentColor;
-        if (selected != displaySelected)
-        {
-            if (selected)
+            selected = _color == TouchAction.currentColor;
+            if (selected != displaySelected)
             {
-                select();
-            } else {
-                unselect();
+                if (selected)
+                {
+                    select();
+                } else {
+                    unselect();
+                }
+            }
+            */
+        
+            if (velocity.x > 0 && x > GameConst.CUPCAKES_PATH[path_step].x) {
+                y += x - GameConst.CUPCAKES_PATH[path_step].x;
+                x = GameConst.CUPCAKES_PATH[path_step].x;
+                if (++path_step == GameConst.CUPCAKES_PATH.length) {
+                    kill();
+                    return ;
+                }
+                velocity.y = velocity.x;
+                velocity.x = 0;
+            } else if (velocity.y > 0 && y > GameConst.CUPCAKES_PATH[path_step].y) {
+                var next_x = GameConst.CUPCAKES_PATH[path_step + 1].x;
+                if (next_x > x) {
+                    x += y - GameConst.CUPCAKES_PATH[path_step].y;
+                    y = GameConst.CUPCAKES_PATH[path_step].y;
+                    path_step++;
+                    velocity.x = velocity.y;
+                    velocity.y = 0;
+                } else {
+                    x -= y - GameConst.CUPCAKES_PATH[path_step].y;
+                    y = GameConst.CUPCAKES_PATH[path_step].y;
+                    path_step++;
+                    velocity.x = -velocity.y;
+                    velocity.y = 0;
+                }
+            } else if (velocity.x < 0 && x < GameConst.CUPCAKES_PATH[path_step].x) {
+                y += GameConst.CUPCAKES_PATH[path_step].x - x;
+                x = GameConst.CUPCAKES_PATH[path_step].x;
+                path_step++;
+                velocity.y = -velocity.x;
+                velocity.x = 0;
             }
         }
 
@@ -197,43 +245,12 @@ class Muffin extends FlxSpriteGroup
             kill();
             return ;
         }
-        
-        if (velocity.x > 0 && x > GameConst.CUPCAKES_PATH[path_step].x) {
-            y += x - GameConst.CUPCAKES_PATH[path_step].x;
-            x = GameConst.CUPCAKES_PATH[path_step].x;
-            if (++path_step == GameConst.CUPCAKES_PATH.length) {
-                kill();
-                return ;
-            }
-            velocity.y = velocity.x;
-            velocity.x = 0;
-        } else if (velocity.y > 0 && y > GameConst.CUPCAKES_PATH[path_step].y) {
-            var next_x = GameConst.CUPCAKES_PATH[path_step + 1].x;
-            if (next_x > x) {
-                x += y - GameConst.CUPCAKES_PATH[path_step].y;
-                y = GameConst.CUPCAKES_PATH[path_step].y;
-                path_step++;
-                velocity.x = velocity.y;
-                velocity.y = 0;
-            } else {
-                x -= y - GameConst.CUPCAKES_PATH[path_step].y;
-                y = GameConst.CUPCAKES_PATH[path_step].y;
-                path_step++;
-                velocity.x = -velocity.y;
-                velocity.y = 0;
-            }
-        } else if (velocity.x < 0 && x < GameConst.CUPCAKES_PATH[path_step].x) {
-            y += GameConst.CUPCAKES_PATH[path_step].x - x;
-            x = GameConst.CUPCAKES_PATH[path_step].x;
-            path_step++;
-            velocity.y = -velocity.x;
-            velocity.x = 0;
-        } 
 	}
 
     public function select() {
         FlxG.sound.play("assets/sounds/select_muffin.wav");
         displaySelected = true;
+        selected = true;
         selectorSprite.loadGraphic("assets/images/muffin/selected.png");
         headSprite.loadGraphic("assets/images/muffin/head_selected.png");
         position_sprites();
@@ -241,6 +258,7 @@ class Muffin extends FlxSpriteGroup
 
     public function unselect() {
         displaySelected = false;
+        selected = false;
         selectorSprite.loadGraphic("assets/images/muffin/unselected.png");
         headSprite.loadGraphic("assets/images/muffin/head.png");
         position_sprites();
