@@ -25,6 +25,8 @@ class PlayState extends FlxState
 	private var muffins : List<Muffin>;
 	private var muffinPool : FlxGroup;
 
+    public static var level : Int; 
+
     var INIT_PROB = 0.80;
     var PROB_DECR = 0.05;
     var current_prob = 0.;
@@ -60,6 +62,12 @@ class PlayState extends FlxState
         }
     }
 
+    public function new(level : Int = 0)
+    {
+        super();
+        PlayState.level = level;
+    }
+
 	override public function create():Void
 	{
 		super.create();
@@ -74,8 +82,10 @@ class PlayState extends FlxState
 //		add(conveyor);
 //		add(ui);
 
-		add(new FlxSprite(0, 0, "assets/images/belt_layer.jpg"));
+		add(new FlxSprite(0, 0, "assets/images/bg_full.png"));
 		add(new FlxSprite(0, 0, "assets/images/ui_header.png"));
+
+        constructBelts();
 
 		muffins = new List<Muffin>();
 		muffinPool = new FlxGroup();
@@ -85,6 +95,23 @@ class PlayState extends FlxState
 		pause.makeGraphic(150, 150, FlxColor.WHITE);
 		add(pause);
 	}
+
+    public function constructBelts()
+    {
+        var path = GameConst.CUPCAKES_PATH[level];
+
+        var i = 1;
+        while (i < path.length) {
+            var origin = path[i - 1];
+            var dest = path[i];
+
+            var belt = new FlxSprite(Math.min(dest.x, origin.x), Math.min(dest.y, origin.y));
+            belt.makeGraphic(Std.int(Math.abs(dest.x - origin.x)) + GameConst.CUPCAKE_WIDTH, Std.int(Math.abs(dest.y - origin.y)) + GameConst.CUPCAKE_HEIGHT, FlxColor.BLACK, true);
+            add(belt);
+
+            i++;
+        }
+    }
 
 	public function handleSwipe()
 	{
