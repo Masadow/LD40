@@ -100,7 +100,8 @@ class PlayState extends FlxState
 		muffinPool = new FlxGroup();
 		add(muffinPool);
 
-		pause = new FlxSprite(FlxG.width - 200, FlxG.height - 200);
+//		pause = new FlxSprite(FlxG.width - 200, FlxG.height - 200);
+		pause = new FlxSprite(0, 0);
 		pause.makeGraphic(150, 150, FlxColor.WHITE);
 		add(pause);
 
