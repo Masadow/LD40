@@ -32,6 +32,8 @@ class PlayState extends FlxState
     var current_prob = 0.;
     var last_id = -1;
     var last_length = 0;
+    var first : Muffin;
+    var clearMuffin = new List<Muffin>();
 
 	public function getNextGoal():Int
     {
@@ -98,6 +100,8 @@ class PlayState extends FlxState
 		pause = new FlxSprite(FlxG.width - 200, FlxG.height - 200);
 		pause.makeGraphic(150, 150, FlxColor.WHITE);
 		add(pause);
+
+        first = null;
 	}
 
     public function constructBelts()
@@ -173,23 +177,29 @@ class PlayState extends FlxState
 			muffins.first().goal = GameConst.COLORS[getNextGoal()];
 			muffins.first().resetPath();
 			muffins.first().x += x_offset;
-
-			var it = muffins.iterator();
-
-			if (it.hasNext()) {
-				var first = it.next();
-				first.leftMuffin = null;
-				if (it.hasNext()) {
-					var second = it.next();
-					first.rightMuffin = second;
-					second.leftMuffin = first;
-				} else {
-					first.rightMuffin = null;
-				}
-			}
+            muffins.first().path_progress += x_offset;
+            muffins.first().active = false;
+            muffins.first().rightMuffin = first;
+            if (first != null) {
+                first.leftMuffin = muffins.first();
+//                trace("Hello", first.path_progress - muffins.first().path_progress, GameConst.SPAWN_GAP);
+            }
+            first = muffins.first();
 		}
 
 		handleSwipe();
+
+        var i = 0;
+        clearMuffin.clear();
+        for (muffin in muffins) {
+            muffin.update(elapsed);
+            if (!muffin.exists) {
+                clearMuffin.push(muffin);
+            }
+        }
+        for (muffin in clearMuffin) {
+            muffins.remove(muffin);
+        }
 
 		for (touch in FlxG.touches.list) {
 			if (touch.justPressed) {

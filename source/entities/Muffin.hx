@@ -53,6 +53,8 @@ class Muffin extends FlxSprite
         if (leftMuffin != null) {
             leftMuffin.rightMuffin = tmpRight;
         }
+        leftMuffin = null;
+        rightMuffin = null;
     }
 
     private function distanceMadeOnPath()
@@ -79,6 +81,20 @@ class Muffin extends FlxSprite
         }
     }
 
+    override public function kill()
+    {
+        super.kill();
+        var tmpRight = rightMuffin;
+        if (rightMuffin != null) {
+            rightMuffin.leftMuffin = leftMuffin;
+        }
+        if (leftMuffin != null) {
+            leftMuffin.rightMuffin = tmpRight;
+        }
+        leftMuffin = null;
+        rightMuffin = null;
+    }
+
     static public function pathDistanceBetween(leftMuffin : Muffin, rightMuffin : Muffin) : Float
     {
         if (rightMuffin.path_step - leftMuffin.path_step > 1) {
@@ -98,7 +114,7 @@ class Muffin extends FlxSprite
     {
         super.update(elapsed);
         if (alive) {
-            forward = leftMuffin == null || (leftMuffin.forward > 0 && path_progress - leftMuffin.path_progress <= GameConst.SPAWN_GAP + 5) ? 1 : -5;
+            forward = leftMuffin == null || (leftMuffin.forward > 0 && path_progress - leftMuffin.path_progress <= GameConst.SPAWN_GAP + 1) ? 1 : -GameConst.BACKWARD_SPEED_FACTOR;
             updateVelocity(elapsed);
             if (path_step == GameConst.CUPCAKES_PATH[PlayState.level].length) {
                 kill();
@@ -115,7 +131,7 @@ class Muffin extends FlxSprite
     {
         var to_move = Math.abs(GameConst.SPEED * elapsed * forward);
         if (forward < 0) {
-            to_move = Math.min(to_move, (path_progress - leftMuffin.path_progress + GameConst.SPAWN_GAP));
+            to_move = Math.min(to_move, path_progress - (leftMuffin.path_progress + GameConst.SPAWN_GAP));
         }
 
         path_progress += to_move * (forward > 0 ? 1 : -1);
@@ -200,18 +216,18 @@ class Muffin extends FlxSprite
                                     base_left : FlxSprite, base_mid_left : FlxSprite,
                                     base_mid_right : FlxSprite, base_right : FlxSprite)
     {
-            var muffin = new Muffin(null);
+        var muffin = new Muffin(null);
 
-            muffin.makeGraphic(GameConst.CUPCAKE_WIDTH, GameConst.CUPCAKE_HEIGHT, FlxColor.TRANSPARENT, true, key);
+        muffin.makeGraphic(GameConst.CUPCAKE_WIDTH, GameConst.CUPCAKE_HEIGHT, FlxColor.TRANSPARENT, true, key);
 
-            muffin.pixels.copyPixels(selector.pixels, selector.pixels.rect, new Point(12, 160), null, null, true);
-            muffin.pixels.copyPixels(base_left.pixels, base_left.pixels.rect, new Point(18, 135), null, null, true);
-            muffin.pixels.copyPixels(base_mid_left.pixels, base_mid_left.pixels.rect, new Point(82, 135), null, null, true);
-            muffin.pixels.copyPixels(base_mid_right.pixels, base_mid_right.pixels.rect, new Point(105, 137), null, null, true);
-            muffin.pixels.copyPixels(base_right.pixels, base_right.pixels.rect, new Point(127, 136), null, null, true);
-            muffin.pixels.copyPixels(head.pixels, head.pixels.rect, new Point(0, 0), null, null, true);
+        muffin.pixels.copyPixels(selector.pixels, selector.pixels.rect, new Point(12, 160), null, null, true);
+        muffin.pixels.copyPixels(base_left.pixels, base_left.pixels.rect, new Point(18, 135), null, null, true);
+        muffin.pixels.copyPixels(base_mid_left.pixels, base_mid_left.pixels.rect, new Point(82, 135), null, null, true);
+        muffin.pixels.copyPixels(base_mid_right.pixels, base_mid_right.pixels.rect, new Point(105, 137), null, null, true);
+        muffin.pixels.copyPixels(base_right.pixels, base_right.pixels.rect, new Point(127, 136), null, null, true);
+        muffin.pixels.copyPixels(head.pixels, head.pixels.rect, new Point(0, 0), null, null, true);
 
-            cacheGraphics.set(key, muffin);
+        cacheGraphics.set(key, muffin);
     }
 
     public static function buildAssets()
