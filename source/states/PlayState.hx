@@ -42,12 +42,14 @@ class PlayState extends FlxState
         if (last_id < 0) {
             current_prob = INIT_PROB;
             last_length = 1;
-            if (x <= 0.33) {
+            if (x <= 0.25) {
                 return (last_id = 0);
-            } else if (x <= 0.67) {
+            } else if (x <= 0.5) {
                 return (last_id = 1);
-            } else {
+            } else if (x <= 0.75) {
                 return (last_id = 2);
+            } else {
+                return (last_id = 3);
             }
         } else {
             if (last_last_length == 1 || (last_length < 8 && (x < current_prob || (last_length >= 2 && last_length <= 3)))) {
@@ -56,11 +58,18 @@ class PlayState extends FlxState
                 last_length++;
                 return last_id;
             } else {
-                last_id += x - current_prob >= (1 - current_prob) / 2 ? 1 : -1;
-                if (last_id == -1) {
-                    last_id = 2;
-                } else if (last_id > 2) {
-                    last_id = 0;
+                x = FlxG.random.float();
+                var n_id : Int;
+                if (x <= 0.33) {
+                    n_id = 0;
+                } else if (x <= 0.67) {
+                    n_id = 1;
+                } else {
+                    n_id = 2;
+                }
+                last_id = n_id >= last_id ? n_id + 1 : n_id;
+                if (n_id >= last_id) {
+                    n_id++;
                 }
                 current_prob = INIT_PROB;
                 last_last_length = last_length;
@@ -119,7 +128,7 @@ class PlayState extends FlxState
             var dest = path[i];
 
             var belt = new FlxSprite(Math.min(dest.x, origin.x), Math.min(dest.y, origin.y));
-            belt.makeGraphic(Std.int(Math.abs(dest.x - origin.x)) + GameConst.CUPCAKE_WIDTH, Std.int(Math.abs(dest.y - origin.y)) + GameConst.CUPCAKE_HEIGHT, FlxColor.BLACK, true);
+            belt.makeGraphic(Std.int(Math.abs(dest.x - origin.x)) + Std.int(GameConst.CUPCAKE_WIDTH * GameConst.CUPCAKE_SCALE), Std.int(Math.abs(dest.y - origin.y)) + Std.int(GameConst.CUPCAKE_HEIGHT * GameConst.CUPCAKE_SCALE), FlxColor.BLACK, true);
             add(belt);
 
             i++;

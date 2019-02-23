@@ -4,16 +4,16 @@ import flixel.util.FlxColor;
 import flixel.math.FlxPoint;
 
 class GameConst {
-    public static var CUPCAKE_WIDTH = 200;
-    public static var CUPCAKE_HEIGHT = 220;
-    public static var CUPCAKE_SCALE = 0.8;
-    public static var CUPCAKES_GAP = 15;
+    public static var CUPCAKE_WIDTH = 250;
+    public static var CUPCAKE_HEIGHT = 250;
+    public static var CUPCAKE_SCALE = 0.75;
+    public static var CUPCAKES_GAP = 0;
     public static var SPAWN_GAP = GameConst.CUPCAKE_WIDTH * GameConst.CUPCAKE_SCALE + GameConst.CUPCAKES_GAP;
     public static var BELT_WIDTH = 250;
     public static var BELT_HALF_WIDTH = 20;
 
     //Determine the different possibles cupcakes colors
-	public static var COLORS = [FlxColor.RED, FlxColor.MAGENTA, FlxColor.CYAN];
+	public static var COLORS = [FlxColor.RED, FlxColor.YELLOW, FlxColor.BLUE, FlxColor.GREEN];
 
     public static var CUPCAKES_PATH = [
         // LEVEL 1
@@ -61,6 +61,6 @@ class GameConst {
     ];
 
     //Initial cupcake speed
-    public static var SPEED = 500;
+    public static var SPEED = 700;
     public static var BACKWARD_SPEED_FACTOR = 5;
 }
