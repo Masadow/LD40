@@ -27,11 +27,12 @@ class PlayState extends FlxState
 
     public static var level : Int; 
 
-    var INIT_PROB = 0.80;
-    var PROB_DECR = 0.05;
+    var INIT_PROB = 0.70;
+    var PROB_DECR = 0.075;
     var current_prob = 0.;
     var last_id = -1;
     var last_length = 0;
+    var last_last_length = 0;
     var first : Muffin;
     var clearMuffin = new List<Muffin>();
 
@@ -39,7 +40,7 @@ class PlayState extends FlxState
     {
         var x = FlxG.random.float();
         if (last_id < 0) {
-            current_prob = 0.8;
+            current_prob = INIT_PROB;
             last_length = 1;
             if (x <= 0.33) {
                 return (last_id = 0);
@@ -49,7 +50,8 @@ class PlayState extends FlxState
                 return (last_id = 2);
             }
         } else {
-            if (last_length < 8 && (x < current_prob || (last_length >= 2 && last_length <= 3))) {
+            if (last_last_length == 1 || (last_length < 8 && (x < current_prob || (last_length >= 2 && last_length <= 3)))) {
+                last_last_length = -1; // This is used to make sure we won't have two singles in a row
                 current_prob -= PROB_DECR;
                 last_length++;
                 return last_id;
@@ -61,6 +63,7 @@ class PlayState extends FlxState
                     last_id = 0;
                 }
                 current_prob = INIT_PROB;
+                last_last_length = last_length;
                 last_length = 1;
                 return last_id;
             }
@@ -182,7 +185,6 @@ class PlayState extends FlxState
             muffins.first().rightMuffin = first;
             if (first != null) {
                 first.leftMuffin = muffins.first();
-//                trace("Hello", first.path_progress - muffins.first().path_progress, GameConst.SPAWN_GAP);
             }
             first = muffins.first();
 		}
