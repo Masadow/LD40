@@ -106,7 +106,7 @@ class PlayState extends FlxState
 
 		muffins = new List<Muffin>();
 		muffinPool = new FlxGroup();
-		add(muffinPool);
+//		add(muffinPool);
 
 //		pause = new FlxSprite(FlxG.width - 200, FlxG.height - 200);
 		pause = new FlxSprite(0, 0);
@@ -181,6 +181,24 @@ class PlayState extends FlxState
             }
         }
 	}
+
+    override public function draw():Void
+    {
+        super.draw();
+
+        //First draw alive cupcakes
+        for (muffin in muffins) {
+            if (muffin.alive && muffin.exists)
+                muffin.draw();
+        }
+
+        //Then draw dead cupcakes on top of everything
+        for (muffin in muffins) {
+            if (!muffin.alive && muffin.exists)
+                muffin.draw();
+        }
+        
+    }
 
 	override public function update(elapsed:Float):Void
 	{
