@@ -57,9 +57,21 @@ class Muffin extends FlxSprite
 
     private function distanceMadeOnPath()
     {
-        var path = GameConst.CUPCAKES_PATH[PlayState.level][path_step];
+        var path = GameConst.CUPCAKES_PATH[PlayState.level][path_step - 1];
         if (path.x == x) {
             return y - path.y;
+        } else if (path.x > x) {
+            return path.x - x;
+        } else {
+            return x - path.x;
+        }
+    }
+
+    private function distanceLeftOnPath()
+    {
+        var path = GameConst.CUPCAKES_PATH[PlayState.level][path_step];
+        if (path.x == x) {
+            return path.y - y;
         } else if (path.x > x) {
             return path.x - x;
         } else {
@@ -73,7 +85,7 @@ class Muffin extends FlxSprite
             return 1000; // A bit hacky but I don't mind precision when cupcakes are so far from each other
         } else if (rightMuffin.path_step != leftMuffin.path_step) {
             var right_path = rightMuffin.distanceMadeOnPath();
-            var left_path = leftMuffin.distanceMadeOnPath();
+            var left_path = leftMuffin.distanceLeftOnPath();
             return left_path + right_path;
         } else {
             var right_path = rightMuffin.distanceMadeOnPath();

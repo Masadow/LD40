@@ -61,6 +61,6 @@ class GameConst {
     ];
 
     //Initial cupcake speed
-    public static var SPEED = 600;
+    public static var SPEED = 900;
 
 }

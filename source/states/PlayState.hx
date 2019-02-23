@@ -31,12 +31,14 @@ class PlayState extends FlxState
     var PROB_DECR = 0.05;
     var current_prob = 0.;
     var last_id = -1;
+    var last_length = 0;
 
 	public function getNextGoal():Int
     {
         var x = FlxG.random.float();
         if (last_id < 0) {
             current_prob = 0.8;
+            last_length = 1;
             if (x <= 0.33) {
                 return (last_id = 0);
             } else if (x <= 0.67) {
@@ -47,6 +49,7 @@ class PlayState extends FlxState
         } else {
             if (x < current_prob) {
                 current_prob -= PROB_DECR;
+                last_length++;
                 return last_id;
             } else {
                 last_id += x - current_prob >= (1 - current_prob) / 2 ? 1 : -1;
@@ -56,6 +59,7 @@ class PlayState extends FlxState
                     last_id = 0;
                 }
                 current_prob = INIT_PROB;
+                last_length = 1;
                 return last_id;
             }
             return 0;
