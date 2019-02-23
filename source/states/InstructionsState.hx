@@ -17,41 +17,6 @@ class InstructionsState extends FlxState
         super();
     }
 
-    var INIT_PROB = 0.80;
-    var PROB_DECR = 0.05;
-    var current_prob = 0.;
-    var last_id = -1;
-
-    public function getNextId():Int
-    {
-        var x = FlxG.random.float();
-        if (last_id < 0) {
-            current_prob = 0.8;
-            if (x <= 0.33) {
-                return (last_id = 0);
-            } else if (x <= 0.67) {
-                return (last_id = 1);
-            } else {
-                return (last_id = 2);
-            }
-        } else {
-            if (x < current_prob) {
-                current_prob -= PROB_DECR;
-                return last_id;
-            } else {
-                last_id += x - current_prob >= (1 - current_prob) / 2 ? 1 : -1;
-                if (last_id == -1) {
-                    last_id = 2;
-                } else if (last_id > 2) {
-                    last_id = 0;
-                }
-                current_prob = INIT_PROB;
-                return last_id;
-            }
-            return 0;
-        }
-    }
-
 	override public function create():Void
 	{
 		super.create();
@@ -106,7 +71,7 @@ class InstructionsState extends FlxState
 
         for (touch in FlxG.touches.list) {
             if (touch.justReleased) {
-                FlxG.switchState(new PlayState());
+                FlxG.switchState(new PlayState(4));
             }
         }
 	}
