@@ -4,7 +4,7 @@ import flixel.FlxState;
 //import entities.Conveyor;
 import entities.Muffin;
 //import entities.Selector;
-//import entities.UI;
+import entities.UI;
 //import entities.TouchAction;
 import flixel.FlxG;
 import states.GameOverState;
@@ -20,7 +20,7 @@ class PlayState extends FlxState
 {
 //	public var conveyor : Conveyor;
 //	public var selector : Selector;
-//	public var ui : UI;
+	public var ui : UI;
 	public var pause : FlxSprite;
 	private var muffins : List<Muffin>;
 	private var muffinPool : FlxGroup;
@@ -83,13 +83,12 @@ class PlayState extends FlxState
 
 //		FlxG.debugger.visible = true;
 
-//		ui = new UI();
+		ui = new UI();
 //		selector = new Selector();
 //		conveyor = new Conveyor(270);
 
 //		add(new Background());
 //		add(conveyor);
-//		add(ui);
 
 		add(new FlxSprite(0, 0, "assets/images/bg_full.png"));
 		add(new FlxSprite(0, 0, "assets/images/ui_header.png"));
@@ -106,6 +105,8 @@ class PlayState extends FlxState
 		add(pause);
 
         first = null;
+
+		add(ui);
 	}
 
     public function constructBelts()
@@ -149,10 +150,11 @@ class PlayState extends FlxState
                     for (muffin in touched) {
                         muffin.hit();
                     }
-//                    UI.score += touched.length * touched.length * 10;
+                    UI.score += touched.length * touched.length * 10;
                     FlxG.sound.play(FlxG.random.bool() ? "assets/sounds/right_cream.wav" : "assets/sounds/right_cream_yes.wav");
                 } else {
-                    FlxG.sound.play("assets/sounds/wrong_cream.wav");
+                    UI.loseLife();
+//                    FlxG.sound.play("assets/sounds/wrong_cream.wav");
 //                    UI.score = Std.int(Math.max(0, UI.score - touched.length * 10));
                 }
             } else if (touch.pressed) {
@@ -211,5 +213,9 @@ class PlayState extends FlxState
 				}
 			}
 		}
+
+        if (UI.health <= 0) {
+            FlxG.switchState(new GameOverState(UI.score));
+        }
 	}
 }

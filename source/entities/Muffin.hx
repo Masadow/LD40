@@ -117,6 +117,7 @@ class Muffin extends FlxSprite
             forward = leftMuffin == null || (leftMuffin.forward > 0 && path_progress - leftMuffin.path_progress <= GameConst.SPAWN_GAP + 1) ? 1 : -GameConst.BACKWARD_SPEED_FACTOR;
             updateVelocity(elapsed);
             if (path_step == GameConst.CUPCAKES_PATH[PlayState.level].length) {
+                UI.loseLife();
                 kill();
                 return ;
             }

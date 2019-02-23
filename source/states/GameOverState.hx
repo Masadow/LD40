@@ -79,7 +79,7 @@ class GameOverState extends FlxState
 
             if (clicked) {
                 FlxG.sound.play("assets/sounds/buttonclick.wav", 1, false, null, false, function () {
-                    FlxG.switchState(new PlayState());
+                    FlxG.switchState(new PlayState(4));
                 });
             }
         }

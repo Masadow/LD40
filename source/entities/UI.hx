@@ -14,11 +14,12 @@ class UI extends FlxGroup {
     public static var health : Int;
     public var scoreTxt : FlxText;
     public var healthPoints : Array<FlxSprite>;
+    public var healthTxt : FlxText;
 
     public function new() {
         super();
 
-        addBackground();
+//        addBackground();
 
 //        var btn = new TouchAction(50, 790);
 //        add(btn);
@@ -44,7 +45,11 @@ class UI extends FlxGroup {
     }
 
     function addHealth() {
-        var health = 0;
+//        var health = 0;
+        healthTxt = new FlxText(FlxG.width - 590, 50, 310, MAX_HEALTH + "\n ");
+        healthTxt.size = 64;
+        add(healthTxt);
+        /*
         while (health++ < MAX_HEALTH) {
             var healthPoint = new FlxSprite(FlxG.width - 93, 260 + health * 90, "assets/images/life_on.png");
             healthPoint.scale.set(Main.global_scale, Main.global_scale);
@@ -52,13 +57,22 @@ class UI extends FlxGroup {
             add(healthPoint);
             healthPoints.push(healthPoint);
         }
+        */
+    }
+
+    public static function loseLife() {
+        FlxG.sound.play("assets/sounds/loose_life.wav");
+        UI.health -= 1;
+        FlxG.camera.shake(0.01, 0.2);
     }
 
     public override function update(elapsed:Float) {
         super.update(elapsed);
 
-        scoreTxt.text = "" + score + "\n ";
+        scoreTxt.text = "" + score + "\n";
+        healthTxt.text = health + "\n";
 
+/*
         var i = 0;
         for (healthPoint in healthPoints) {
             if (++i > health) {
@@ -68,5 +82,6 @@ class UI extends FlxGroup {
                 }
             }
         }
+        */
     }
 }
