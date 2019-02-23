@@ -47,7 +47,7 @@ class PlayState extends FlxState
                 return (last_id = 2);
             }
         } else {
-            if (x < current_prob) {
+            if (last_length < 8 && (x < current_prob || (last_length >= 2 && last_length <= 3))) {
                 current_prob -= PROB_DECR;
                 last_length++;
                 return last_id;
@@ -134,7 +134,9 @@ class PlayState extends FlxState
                         color = muffin.goal;
                     }
                 }
-                if (good && touched.length > 0) {
+                if (touched.length == 1) {
+                    // Single tap, nothing happen
+                } else if (good && touched.length > 1) {
                     //Then no mistakes have been done
                     for (muffin in touched) {
                         muffin.hit();

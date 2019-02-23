@@ -216,7 +216,6 @@ class Muffin extends FlxSprite
 
     public static function buildAssets()
     {
-        trace("hello");
         var headSprite = new FlxSprite(0, 0, "assets/images/muffin/head.png");
         var selectorSprite = new FlxSprite(0, 0, "assets/images/muffin/unselected.png");
         var headSprite2 = new FlxSprite(0, 0, "assets/images/muffin/head_selected.png");
