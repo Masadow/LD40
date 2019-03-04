@@ -30,54 +30,30 @@ class PlayState extends FlxState
     var INIT_PROB = 0.70;
     var PROB_DECR = 0.075;
     var current_prob = 0.;
-    var last_id = -1;
+    var last_id = 0;
     var last_length = 0;
     var last_last_length = 0;
     var first : Muffin;
     var clearMuffin = new List<Muffin>();
 
-	public function getNextGoal():Int
+
+    var cur_count = 0;
+    var cur_length = 1;
+	public function prepareNextMuffin(m : Muffin)
     {
-        var x = FlxG.random.float();
-        if (last_id < 0) {
-            current_prob = INIT_PROB;
-            last_length = 1;
-            if (x <= 0.25) {
-                return (last_id = 0);
-            } else if (x <= 0.5) {
-                return (last_id = 1);
-            } else if (x <= 0.75) {
-                return (last_id = 2);
+        if (cur_count++ == cur_length) {
+            if (cur_length == 1) {
+                //Forbids two singles in a row
+                while ((cur_length = FlxG.random.weightedPick(GameConst.LENGTH_PROBS) + 1) == 1) {}
             } else {
-                return (last_id = 3);
+                cur_length = FlxG.random.weightedPick(GameConst.LENGTH_PROBS) + 1;
             }
-        } else {
-            if (last_last_length == 1 || (last_length < 8 && (x < current_prob || (last_length >= 2 && last_length <= 3)))) {
-                last_last_length = -1; // This is used to make sure we won't have two singles in a row
-                current_prob -= PROB_DECR;
-                last_length++;
-                return last_id;
-            } else {
-                x = FlxG.random.float();
-                var n_id : Int;
-                if (x <= 0.33) {
-                    n_id = 0;
-                } else if (x <= 0.67) {
-                    n_id = 1;
-                } else {
-                    n_id = 2;
-                }
-                last_id = n_id >= last_id ? n_id + 1 : n_id;
-                if (n_id >= last_id) {
-                    n_id++;
-                }
-                current_prob = INIT_PROB;
-                last_last_length = last_length;
-                last_length = 1;
-                return last_id;
-            }
-            return 0;
+            cur_count = 1;
+            var color_id = FlxG.random.int(0, GameConst.COLORS.length - 2);
+            last_id = color_id >= last_id ? color_id + 1 : color_id;
+            trace(cur_length);
         }
+        m.goal = GameConst.COLORS[last_id];
     }
 
     public function new(level : Int = 0)
@@ -207,7 +183,7 @@ class PlayState extends FlxState
 		if (muffins.length == 0 || muffins.first().path_progress >= GameConst.SPAWN_GAP) {
 			var x_offset = muffins.length > 0 ? muffins.first().path_progress - GameConst.SPAWN_GAP : 0;
 			muffins.push(cast muffinPool.recycle(Muffin));
-			muffins.first().goal = GameConst.COLORS[getNextGoal()];
+            prepareNextMuffin(muffins.first());
 			muffins.first().resetPath();
 			muffins.first().x += x_offset;
             muffins.first().path_progress += x_offset;

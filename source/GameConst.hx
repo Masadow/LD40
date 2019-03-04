@@ -12,6 +12,17 @@ class GameConst {
     public static var BELT_WIDTH = 250;
     public static var BELT_HALF_WIDTH = 20;
 
+    public static var LENGTH_PROBS = [
+        10., // 1
+        0, // 2
+        35, // 3
+        25, // 4
+        15, // 5
+        5, // 6
+        0, // 7
+        10 // 8 -> Automatically become bonus
+    ];
+
     //Determine the different possibles cupcakes colors
 	public static var COLORS = [FlxColor.RED, FlxColor.YELLOW, FlxColor.BLUE, FlxColor.GREEN];
 
