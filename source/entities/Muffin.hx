@@ -10,6 +10,7 @@ import flixel.math.FlxPoint;
 import flixel.graphics.frames.FlxFrame;
 import openfl.geom.Point;
 import states.PlayState;
+import entities.bonus.Bonus;
 
 typedef BaseSprites = {
     left: FlxSprite,
@@ -31,6 +32,8 @@ class Muffin extends FlxSprite
     public var rightMuffin : Muffin;
     public var leftMuffin : Muffin;
 
+    public var bonus(default, set) : Bonus;
+
 	public function new(color : Null<FlxColor> = null)
 	{
 		super(0, 0);
@@ -40,6 +43,7 @@ class Muffin extends FlxSprite
 //        updateHitbox();
 
         selected = false;
+        bonus = null;
         goal = color;
 	}
 
@@ -180,7 +184,8 @@ class Muffin extends FlxSprite
     {
         if (goal != null) {
             var selected_str = (selected ? "" : "un") + "selected";
-            loadGraphicFromSprite(cacheGraphics.get("muffin_" + selected_str + "_" + _get_color(goal)));
+            var bonus_str = bonus != null ? (bonus.id + "_") : "";
+            loadGraphicFromSprite(cacheGraphics.get("muffin_" + bonus_str + selected_str + "_" + _get_color(goal)));
             origin.set(0, 0);
             scale.set(GameConst.CUPCAKE_SCALE, GameConst.CUPCAKE_SCALE);
         }
@@ -204,6 +209,15 @@ class Muffin extends FlxSprite
         return new_val;
     }
 
+    private function set_bonus(new_val : Bonus) : Bonus
+    {
+        if (bonus != new_val) {
+            bonus = new_val;
+            refresh_sprite();
+        }
+        return new_val;
+    }
+
     private static function _get_color(color : FlxColor) : String {
         if (color == FlxColor.RED) {
             return "red";
@@ -217,14 +231,20 @@ class Muffin extends FlxSprite
         return "";
     }
 
-    private static function buildAsset(key : String, base : FlxSprite, face : FlxSprite)
+    private static function buildAsset(key : String, base : FlxSprite, face : FlxSprite, selector : FlxSprite, bonus : FlxSprite)
     {
         var muffin = new Muffin(null);
 
         muffin.makeGraphic(GameConst.CUPCAKE_WIDTH, GameConst.CUPCAKE_HEIGHT, FlxColor.TRANSPARENT, true, key);
 
+        if (selector != null) {
+            muffin.pixels.copyPixels(selector.pixels, selector.pixels.rect, new Point(0, 0), null, null, true);
+        }
         muffin.pixels.copyPixels(base.pixels, base.pixels.rect, new Point(0, 0), null, null, true);
         muffin.pixels.copyPixels(face.pixels, face.pixels.rect, new Point(0, 0), null, null, true);
+        if (bonus != null) {
+            muffin.pixels.copyPixels(bonus.pixels, bonus.pixels.rect, new Point(0, 0), null, null, true);
+        }
 
         cacheGraphics.set(key, muffin);
     }
@@ -234,26 +254,34 @@ class Muffin extends FlxSprite
 //        var headSprite = new FlxSprite(0, 0, "assets/images/muffin/head.png");
 //        var selectorSprite = new FlxSprite(0, 0, "assets/images/muffin/unselected.png");
 //        var headSprite2 = new FlxSprite(0, 0, "assets/images/muffin/head_selected.png");
-//        var selectorSprite2 = new FlxSprite(0, 0, "assets/images/muffin/selected.png");
+        var selectorSprite2 = new FlxSprite(0, 0, "assets/images/muffin/selected_cupcake.png");
         var smile = new FlxSprite(0, 0, "assets/images/muffin/face_heart.png");
         var smile_selected = new FlxSprite(0, 0, "assets/images/muffin/face_select.png");
         for (color in GameConst.COLORS) {
             var base = new FlxSprite(0, 0, "assets/images/muffin/" + _get_color(color) + ".png");
-            buildAsset("muffin_unselected_" + _get_color(color), base, smile);
-            buildAsset("muffin_selected_" + _get_color(color), base, smile_selected);
-            /*
-            buildAsset("muffin_unselected_" + _get_color(color), headSprite, selectorSprite,
-                new FlxSprite(0, 0, "assets/images/muffin/base/left_" + _get_color(color) + ".png"),
-                new FlxSprite(0, 0, "assets/images/muffin/base/mid_left_" + _get_color(color) + ".png"),
-                new FlxSprite(0, 0, "assets/images/muffin/base/mid_right_" + _get_color(color) + ".png"),
-                new FlxSprite(0, 0, "assets/images/muffin/base/right_" + _get_color(color) + ".png"));
+            buildAsset("muffin_unselected_" + _get_color(color), base, smile, null, null);
+            buildAsset("muffin_selected_" + _get_color(color), base, smile_selected, selectorSprite2, null);
 
-            buildAsset("muffin_selected_" + _get_color(color), headSprite2, selectorSprite2,
-                new FlxSprite(0, 0, "assets/images/muffin/base/left_" + _get_color(color) + ".png"),
-                new FlxSprite(0, 0, "assets/images/muffin/base/mid_left_" + _get_color(color) + ".png"),
-                new FlxSprite(0, 0, "assets/images/muffin/base/mid_right_" + _get_color(color) + ".png"),
-                new FlxSprite(0, 0, "assets/images/muffin/base/right_" + _get_color(color) + ".png"));
-            */
+            for (bonus in GameConst.BONUSES) {
+                var bonus_id = Type.getClassName(bonus).split(".").pop().toLowerCase();
+                var bonus_asset = new FlxSprite(0, 0, "assets/images/bonus/" + bonus_id + ".png");
+                buildAsset("muffin_" + bonus_id + "_unselected_" + _get_color(color), base, smile, null, bonus_asset);
+                buildAsset("muffin_" + bonus_id + "_selected_" + _get_color(color), base, smile_selected, selectorSprite2, bonus_asset);
+
+                /*
+                buildAsset("muffin_unselected_" + _get_color(color), headSprite, selectorSprite,
+                    new FlxSprite(0, 0, "assets/images/muffin/base/left_" + _get_color(color) + ".png"),
+                    new FlxSprite(0, 0, "assets/images/muffin/base/mid_left_" + _get_color(color) + ".png"),
+                    new FlxSprite(0, 0, "assets/images/muffin/base/mid_right_" + _get_color(color) + ".png"),
+                    new FlxSprite(0, 0, "assets/images/muffin/base/right_" + _get_color(color) + ".png"));
+
+                buildAsset("muffin_selected_" + _get_color(color), headSprite2, selectorSprite2,
+                    new FlxSprite(0, 0, "assets/images/muffin/base/left_" + _get_color(color) + ".png"),
+                    new FlxSprite(0, 0, "assets/images/muffin/base/mid_left_" + _get_color(color) + ".png"),
+                    new FlxSprite(0, 0, "assets/images/muffin/base/mid_right_" + _get_color(color) + ".png"),
+                    new FlxSprite(0, 0, "assets/images/muffin/base/right_" + _get_color(color) + ".png"));
+                */
+            }
         }
     }
 }

@@ -3,24 +3,30 @@ package;
 import flixel.util.FlxColor;
 import flixel.math.FlxPoint;
 
+import entities.bonus.Life;
+
 class GameConst {
     public static var CUPCAKE_WIDTH = 250;
     public static var CUPCAKE_HEIGHT = 250;
-    public static var CUPCAKE_SCALE = 0.75;
+    public static var CUPCAKE_SCALE = 0.82;
     public static var CUPCAKES_GAP = 0;
     public static var SPAWN_GAP = GameConst.CUPCAKE_WIDTH * GameConst.CUPCAKE_SCALE + GameConst.CUPCAKES_GAP;
     public static var BELT_WIDTH = 250;
     public static var BELT_HALF_WIDTH = 20;
 
     public static var LENGTH_PROBS = [
-        10., // 1
+        12., // 1
         0, // 2
-        35, // 3
-        25, // 4
-        15, // 5
-        5, // 6
+        37, // 3
+        27, // 4
+        17, // 5
+        7, // 6
         0, // 7
-        10 // 8 -> Automatically become bonus
+        0 // 8 -> Automatically become bonus
+    ];
+
+    public static var BONUSES = [
+        Life
     ];
 
     //Determine the different possibles cupcakes colors

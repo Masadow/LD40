@@ -14,6 +14,7 @@ import flixel.input.FlxPointer;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.group.FlxGroup;
+import entities.bonus.Bonus;
 
 
 class PlayState extends FlxState
@@ -30,15 +31,17 @@ class PlayState extends FlxState
     var INIT_PROB = 0.70;
     var PROB_DECR = 0.075;
     var current_prob = 0.;
-    var last_id = 0;
-    var last_length = 0;
-    var last_last_length = 0;
     var first : Muffin;
     var clearMuffin = new List<Muffin>();
+    var touched = new List<Muffin>();
+    var goodSwipe : Bool;
 
 
-    var cur_count = 0;
+    var last_id = 0;
+    var cur_count = 1;
     var cur_length = 1;
+    var cur_bonus : Bonus = null;
+    private static var current_combo_idx = -1; 
 	public function prepareNextMuffin(m : Muffin)
     {
         if (cur_count++ == cur_length) {
@@ -51,9 +54,18 @@ class PlayState extends FlxState
             cur_count = 1;
             var color_id = FlxG.random.int(0, GameConst.COLORS.length - 2);
             last_id = color_id >= last_id ? color_id + 1 : color_id;
-            trace(cur_length);
+
+            // Spawn a bonus only on 8 length rows
+            cur_bonus = cur_length == 8 ? Type.createInstance(GameConst.BONUSES[FlxG.random.int(0, GameConst.BONUSES.length - 1)], []) : null;
+            if (cur_bonus != null) {
+                cur_bonus.idx = ++current_combo_idx;
+            }
         }
+        m.bonus = cur_bonus;
         m.goal = GameConst.COLORS[last_id];
+        if (cur_bonus != null) {
+            cur_bonus.addMuffin(m);
+        }
     }
 
     public function new(level : Int = 0)
@@ -111,37 +123,55 @@ class PlayState extends FlxState
         }
     }
 
+    private function resetTouched()
+    {
+        for (muffin in touched) {
+            muffin.selected = false;
+            muffin.color = FlxColor.WHITE;
+        }
+        touched.clear();
+        goodSwipe = true;
+    }
+
 	public function handleSwipe()
 	{
         for (touch in FlxG.touches.list) {
-            if (touch.justReleased) {
-                var good = true;
-                var color : FlxColor = FlxColor.TRANSPARENT;
-                var touched = new List<Muffin>();
-                for (muffin in muffins) {
-                    if (muffin.selected) {
-                        muffin.selected = false;
-                        touched.push(muffin);
-                        if (color != FlxColor.TRANSPARENT && color != muffin.goal) {
-                            good = false;
-                        }
-                        color = muffin.goal;
-                    }
-                }
+            if (touch.justPressed) {
+                resetTouched();
+            } else if (touch.justReleased) {
                 if (touched.length == 1) {
                     // Single tap, nothing happen
-                } else if (good && touched.length > 1) {
+                } else if (goodSwipe && touched.length > 1) {
+                    //Check combo
+                    var comboIdx = touched.length == 8 && touched.first().bonus != null ? touched.first().bonus.idx : -1;
+                    for (muffin in touched) {
+                        if (muffin.bonus == null || muffin.bonus.idx != comboIdx) {
+                            comboIdx = -1;
+                        }
+                    }
+                    if (comboIdx != -1) {
+                        touched.first().bonus.trigger();
+                    }
                     //Then no mistakes have been done
                     for (muffin in touched) {
                         muffin.hit();
+                        // Muffin combo has been missed
+                        if (comboIdx == -1 && muffin.bonus != null) {
+                            //Check if it's the current spawning combo and cancel it if needed
+                            if (muffin.bonus.idx == current_combo_idx) {
+                                cur_bonus = null;
+                            }
+                            muffin.bonus.cancel();
+                        }
                     }
                     UI.score += touched.length * touched.length * 10;
                     FlxG.sound.play(FlxG.random.bool() ? "assets/sounds/right_cream.wav" : "assets/sounds/right_cream_yes.wav");
                 } else {
-                    UI.loseLife();
-//                    FlxG.sound.play("assets/sounds/wrong_cream.wav");
+                    //UI.loseLife();
+                    FlxG.sound.play("assets/sounds/wrong_cream.wav");
 //                    UI.score = Std.int(Math.max(0, UI.score - touched.length * 10));
                 }
+                resetTouched();
             } else if (touch.pressed) {
                 for (muffin in muffins) {
 					if (muffin.alive) {
@@ -150,6 +180,15 @@ class PlayState extends FlxState
 							width = muffin.width * GameConst.CUPCAKE_SCALE,
 							height = muffin.height * GameConst.CUPCAKE_SCALE;
 						if (mox > muffin.x && mox < muffin.x + width && moy > muffin.y && moy < muffin.y + height) {
+                            if (!muffin.selected) {
+                                //Means it's a new selection
+                                touched.push(muffin);
+                                if (touched.last().goal != muffin.goal) {
+                                    //The newly swiped cupcake is wrong, tint it in red
+                                    muffin.color = FlxColor.RED;
+                                    goodSwipe = false;
+                                }
+                            }
 							muffin.selected = true;
 						}
 					}

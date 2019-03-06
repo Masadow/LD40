@@ -10,6 +10,7 @@ import flixel.math.FlxRect;
 import flixel.graphics.frames.FlxFrame;
 import flixel.util.FlxColor;
 import openfl.geom.Point;
+import entities.bonus.Bonus;
 
 class InstructionsState extends FlxState
 {
