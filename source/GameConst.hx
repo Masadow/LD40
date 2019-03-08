@@ -8,7 +8,7 @@ import entities.bonus.Life;
 class GameConst {
     public static var CUPCAKE_WIDTH = 250;
     public static var CUPCAKE_HEIGHT = 250;
-    public static var CUPCAKE_SCALE = 0.82;
+    public static var CUPCAKE_SCALE = 0.41;
     public static var CUPCAKES_GAP = 0;
     public static var SPAWN_GAP = GameConst.CUPCAKE_WIDTH * GameConst.CUPCAKE_SCALE + GameConst.CUPCAKES_GAP;
     public static var BELT_WIDTH = 250;
@@ -78,6 +78,6 @@ class GameConst {
     ];
 
     //Initial cupcake speed
-    public static var SPEED = 700;
+    public static var SPEED = 840;
     public static var BACKWARD_SPEED_FACTOR = 5;
 }
