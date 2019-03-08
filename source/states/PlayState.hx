@@ -179,13 +179,17 @@ class PlayState extends FlxState
 							moy = touch.y,
 							width = muffin.width * GameConst.CUPCAKE_SCALE,
 							height = muffin.height * GameConst.CUPCAKE_SCALE;
+
+                        if (muffin.selected && !goodSwipe) {
+                            muffin.color = FlxColor.RED;
+                        }
+
 						if (mox > muffin.x && mox < muffin.x + width && moy > muffin.y && moy < muffin.y + height) {
                             if (!muffin.selected) {
                                 //Means it's a new selection
                                 touched.push(muffin);
                                 if (touched.last().goal != muffin.goal) {
                                     //The newly swiped cupcake is wrong, tint it in red
-                                    muffin.color = FlxColor.RED;
                                     goodSwipe = false;
                                 }
                             }

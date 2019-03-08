@@ -15,12 +15,12 @@ class GameConst {
     public static var BELT_HALF_WIDTH = 20;
 
     public static var LENGTH_PROBS = [
-        12., // 1
+        18., // 1
         0, // 2
-        37, // 3
-        27, // 4
-        17, // 5
-        7, // 6
+        40, // 3
+        24, // 4
+        13, // 5
+        5, // 6
         0, // 7
         0 // 8 -> Automatically become bonus
     ];
