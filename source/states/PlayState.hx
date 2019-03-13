@@ -56,10 +56,10 @@ class PlayState extends FlxState
             last_id = color_id >= last_id ? color_id + 1 : color_id;
 
             // Spawn a bonus only on 8 length rows
-            cur_bonus = cur_length == 8 ? Type.createInstance(GameConst.BONUSES[FlxG.random.int(0, GameConst.BONUSES.length - 1)], []) : null;
-            if (cur_bonus != null) {
-                cur_bonus.idx = ++current_combo_idx;
-            }
+//            cur_bonus = cur_length == 8 ? Type.createInstance(GameConst.BONUSES[FlxG.random.int(0, GameConst.BONUSES.length - 1)], []) : null;
+//            if (cur_bonus != null) {
+//                cur_bonus.idx = ++current_combo_idx;
+//            }
         }
         m.bonus = cur_bonus;
         m.goal = GameConst.COLORS[last_id];
