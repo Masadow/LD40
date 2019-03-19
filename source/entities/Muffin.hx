@@ -284,4 +284,8 @@ class Muffin extends FlxSprite
             }
         }
     }
+
+    public function isForward() {
+        return forward > 0;
+    }
 }

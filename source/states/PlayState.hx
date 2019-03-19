@@ -31,7 +31,6 @@ class PlayState extends FlxState
     var INIT_PROB = 0.70;
     var PROB_DECR = 0.075;
     var current_prob = 0.;
-    var first : Muffin;
     var clearMuffin = new List<Muffin>();
     var touched = new List<Muffin>();
     var goodSwipe : Bool;
@@ -55,11 +54,11 @@ class PlayState extends FlxState
             var color_id = FlxG.random.int(0, GameConst.COLORS.length - 2);
             last_id = color_id >= last_id ? color_id + 1 : color_id;
 
-            // Spawn a bonus only on 8 length rows
-//            cur_bonus = cur_length == 8 ? Type.createInstance(GameConst.BONUSES[FlxG.random.int(0, GameConst.BONUSES.length - 1)], []) : null;
-//            if (cur_bonus != null) {
-//                cur_bonus.idx = ++current_combo_idx;
-//            }
+            // Spawn a bonus only on 7 length rows
+            cur_bonus = cur_length == 7 ? Type.createInstance(GameConst.BONUSES[FlxG.random.int(0, GameConst.BONUSES.length - 1)], []) : null;
+            if (cur_bonus != null) {
+                cur_bonus.idx = ++current_combo_idx;
+            }
         }
         m.bonus = cur_bonus;
         m.goal = GameConst.COLORS[last_id];
@@ -101,8 +100,6 @@ class PlayState extends FlxState
 		pause.makeGraphic(150, 150, FlxColor.WHITE);
 		add(pause);
 
-        first = null;
-
 		add(ui);
 	}
 
@@ -135,7 +132,9 @@ class PlayState extends FlxState
 
 	public function handleSwipe()
 	{
+        var isSwiping = false;
         for (touch in FlxG.touches.list) {
+            isSwiping = true;
             if (touch.justPressed) {
                 resetTouched();
             } else if (touch.justReleased) {
@@ -143,7 +142,7 @@ class PlayState extends FlxState
                     // Single tap, nothing happen
                 } else if (goodSwipe && touched.length > 1) {
                     //Check combo
-                    var comboIdx = touched.length == 8 && touched.first().bonus != null ? touched.first().bonus.idx : -1;
+                    var comboIdx = touched.length == 7 && touched.first().bonus != null ? touched.first().bonus.idx : -1;
                     for (muffin in touched) {
                         if (muffin.bonus == null || muffin.bonus.idx != comboIdx) {
                             comboIdx = -1;
@@ -199,7 +198,51 @@ class PlayState extends FlxState
                 }
             }
         }
+        return isSwiping;
 	}
+
+    public function handleCombos()
+    {
+        //First check for combos
+        var cur_color = FlxColor.TRANSPARENT;
+        var streak = new List<Muffin>();
+        var hadCombo = false;
+        for (muffin in muffins) {
+            if (muffin.alive) {
+                if (muffin.isForward() && muffin.goal == cur_color) {
+                    streak.push(muffin);
+                }
+                else {
+                    if (streak.length >= 8) {
+                        //There is a combo streak
+                        for (m_streak in streak) {
+                            m_streak.hit();
+                            UI.score += streak.length * streak.length * 10;
+                            hadCombo = true;
+                        }
+                    }
+                    streak.clear();
+                    if (muffin.isForward()) {
+                        cur_color = muffin.goal;
+                        streak.push(muffin);
+                    } else {
+                        cur_color = FlxColor.TRANSPARENT;
+                    }
+                }
+            }
+        }
+        if (streak.length >= 8) {
+            //There is a combo streak
+            for (m_streak in streak) {
+                m_streak.hit();
+                UI.score += streak.length * streak.length * 10;
+                hadCombo = true;
+            }
+        }
+        if (hadCombo) {
+            FlxG.sound.play(FlxG.random.bool() ? "assets/sounds/right_cream.wav" : "assets/sounds/right_cream_yes.wav");
+        }
+    }
 
     override public function draw():Void
     {
@@ -224,6 +267,7 @@ class PlayState extends FlxState
 		super.update(elapsed);
 
 		if (muffins.length == 0 || muffins.first().path_progress >= GameConst.SPAWN_GAP) {
+            var first : Muffin = muffins.first();
 			var x_offset = muffins.length > 0 ? muffins.first().path_progress - GameConst.SPAWN_GAP : 0;
 			muffins.push(cast muffinPool.recycle(Muffin));
             prepareNextMuffin(muffins.first());
@@ -235,10 +279,11 @@ class PlayState extends FlxState
             if (first != null) {
                 first.leftMuffin = muffins.first();
             }
-            first = muffins.first();
 		}
 
-		handleSwipe();
+        if (!handleSwipe()) {
+            handleCombos();            
+        }
 
         var i = 0;
         clearMuffin.clear();

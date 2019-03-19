@@ -6,10 +6,10 @@ import flixel.math.FlxPoint;
 import entities.bonus.Life;
 
 class GameConst {
-    public static var CUPCAKE_WIDTH = 250;
-    public static var CUPCAKE_HEIGHT = 250;
-    public static var CUPCAKE_SCALE = 0.60;
-    public static var CUPCAKES_GAP = 0;
+    public static var CUPCAKE_WIDTH = 203;
+    public static var CUPCAKE_HEIGHT = 308;
+    public static var CUPCAKE_SCALE = 0.65;
+    public static var CUPCAKES_GAP = 25;
     public static var SPAWN_GAP = GameConst.CUPCAKE_WIDTH * GameConst.CUPCAKE_SCALE + GameConst.CUPCAKES_GAP;
     public static var BELT_WIDTH = 250;
     public static var BELT_HALF_WIDTH = 20;
@@ -17,12 +17,12 @@ class GameConst {
     public static var LENGTH_PROBS = [
         24., // 1
         0, // 2
-        0, // 3
-        0, // 4
-        36, // 5
-        24, // 6
-        14, // 7
-        5 // 8 -> Automatically become bonus
+        31, // 3
+        27, // 4
+        14, // 5
+        5, // 6
+        2, // 7
+        0 // 8 -> Automatically become bonus
     ];
 
     public static var BONUSES = [
@@ -30,7 +30,7 @@ class GameConst {
     ];
 
     //Determine the different possibles cupcakes colors
-	public static var COLORS = [FlxColor.RED, FlxColor.YELLOW, FlxColor.BLUE, FlxColor.GREEN];
+	public static var COLORS = [FlxColor.RED, FlxColor.YELLOW, FlxColor.BLUE/*, FlxColor.GREEN*/];
 
     public static var CUPCAKES_PATH = [
         // LEVEL 1
@@ -78,6 +78,6 @@ class GameConst {
     ];
 
     //Initial cupcake speed
-    public static var SPEED = 750;
+    public static var SPEED = 700;
     public static var BACKWARD_SPEED_FACTOR = 5;
 }
