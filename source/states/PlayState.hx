@@ -3,6 +3,8 @@ package states;
 import flixel.FlxState;
 //import entities.Conveyor;
 import entities.Muffin;
+import entities.BaseMuffin;
+import entities.Spikey;
 //import entities.Selector;
 import entities.UI;
 //import entities.TouchAction;
@@ -23,7 +25,7 @@ class PlayState extends FlxState
 //	public var selector : Selector;
 	public var ui : UI;
 	public var pause : FlxSprite;
-	private var muffins : List<Muffin>;
+	private var muffins : List<BaseMuffin>;
 	private var muffinPool : FlxGroup;
 
     public static var level : Int; 
@@ -31,8 +33,8 @@ class PlayState extends FlxState
     var INIT_PROB = 0.70;
     var PROB_DECR = 0.075;
     var current_prob = 0.;
-    var clearMuffin = new List<Muffin>();
-    var touched = new List<Muffin>();
+    var clearMuffin = new List<BaseMuffin>();
+    var touched = new List<BaseMuffin>();
     var goodSwipe : Bool;
 
 
@@ -41,8 +43,9 @@ class PlayState extends FlxState
     var cur_length = 1;
     var cur_bonus : Bonus = null;
     private static var current_combo_idx = -1; 
-	public function prepareNextMuffin(m : Muffin)
+	public function prepareNextMuffin()
     {
+        var bm : BaseMuffin;
         if (cur_count++ == cur_length) {
             if (cur_length == 1) {
                 //Forbids two singles in a row
@@ -60,11 +63,22 @@ class PlayState extends FlxState
                 cur_bonus.idx = ++current_combo_idx;
             }
         }
-        m.bonus = cur_bonus;
-        m.goal = GameConst.COLORS[last_id];
-        if (cur_bonus != null) {
-            cur_bonus.addMuffin(m);
+        if (cur_length == 1) {
+            //Spawn a nasty spikey
+            bm = cast muffinPool.recycle(Spikey);
+			muffins.push(bm);
+        } else {
+            //Spawn a regular cupcake
+            bm = cast muffinPool.recycle(Muffin);
+			muffins.push(bm);
+            var m : Muffin = cast bm;
+            m.bonus = cur_bonus;
+            m.goal = GameConst.COLORS[last_id];
+            if (cur_bonus != null) {
+                cur_bonus.addMuffin(cast bm);
+            }
         }
+        return bm;
     }
 
     public function new(level : Int = 0)
@@ -91,7 +105,7 @@ class PlayState extends FlxState
 
         constructBelts();
 
-		muffins = new List<Muffin>();
+		muffins = new List<BaseMuffin>();
 		muffinPool = new FlxGroup();
 //		add(muffinPool);
 
@@ -130,6 +144,50 @@ class PlayState extends FlxState
         goodSwipe = true;
     }
 
+    public function validateMuffins(validMuffins : List<BaseMuffin>)
+    {
+        //Then no mistakes have been done
+        //Check bonuses
+        //it might be possible to clear out several bonuses in a single shot with combos)
+        //That's why we use a Map here
+        var bonusCount = new Map<Int, Int>();
+        for (muffin in validMuffins) {
+            if (muffin.canCombo()) {
+                var m : Muffin = cast muffin;
+                if (m.bonus != null) {
+                    if (!bonusCount.exists(m.bonus.idx)) {
+                        bonusCount.set(m.bonus.idx, 0);
+                    }
+                    bonusCount.set(m.bonus.idx, bonusCount.get(m.bonus.idx) + 1);
+                }
+            }
+        }
+        for (muffin in validMuffins) {
+            muffin.hit();
+            if (muffin.canCombo()) {
+                var m : Muffin = cast muffin;
+                if (m.bonus != null) {
+                    var bc = bonusCount.get(m.bonus.idx);
+                    if (bc == 7) {
+                        //Bonus completed
+                        m.bonus.trigger();
+                        bonusCount.remove(m.bonus.idx);
+                    } else if (bc != null) {
+                        //Check it it's the current spawning combo and cancel future bonus spawn if needed
+                        if (m.bonus.idx == current_combo_idx) {
+                            cur_bonus = null;
+                        }
+                        //Bonus is not completed so we cancel it
+                        m.bonus.cancel();
+                    }
+                    //Otherwise, bonus already counted
+                    //so we do nothing
+                }
+            }
+        }
+        UI.score += validMuffins.length * validMuffins.length * 10;
+    }
+
 	public function handleSwipe()
 	{
         var isSwiping = false;
@@ -141,29 +199,7 @@ class PlayState extends FlxState
                 if (touched.length == 1) {
                     // Single tap, nothing happen
                 } else if (goodSwipe && touched.length > 1) {
-                    //Check combo
-                    var comboIdx = touched.length == 7 && touched.first().bonus != null ? touched.first().bonus.idx : -1;
-                    for (muffin in touched) {
-                        if (muffin.bonus == null || muffin.bonus.idx != comboIdx) {
-                            comboIdx = -1;
-                        }
-                    }
-                    if (comboIdx != -1) {
-                        touched.first().bonus.trigger();
-                    }
-                    //Then no mistakes have been done
-                    for (muffin in touched) {
-                        muffin.hit();
-                        // Muffin combo has been missed
-                        if (comboIdx == -1 && muffin.bonus != null) {
-                            //Check if it's the current spawning combo and cancel it if needed
-                            if (muffin.bonus.idx == current_combo_idx) {
-                                cur_bonus = null;
-                            }
-                            muffin.bonus.cancel();
-                        }
-                    }
-                    UI.score += touched.length * touched.length * 10;
+                    validateMuffins(touched);
                     FlxG.sound.play(FlxG.random.bool() ? "assets/sounds/right_cream.wav" : "assets/sounds/right_cream_yes.wav");
                 } else {
                     //UI.loseLife();
@@ -186,8 +222,8 @@ class PlayState extends FlxState
 						if (mox > muffin.x && mox < muffin.x + width && moy > muffin.y && moy < muffin.y + height) {
                             if (!muffin.selected) {
                                 //Means it's a new selection
-                                touched.push(muffin);
-                                if (touched.last().goal != muffin.goal) {
+                                touched.push(cast muffin);
+                                if (!muffin.canCombo() || (cast touched.last()).goal != (cast muffin).goal) {
                                     //The newly swiped cupcake is wrong, tint it in red
                                     goodSwipe = false;
                                 }
@@ -205,25 +241,21 @@ class PlayState extends FlxState
     {
         //First check for combos
         var cur_color = FlxColor.TRANSPARENT;
-        var streak = new List<Muffin>();
+        var streak = new List<BaseMuffin>();
         var hadCombo = false;
         for (muffin in muffins) {
             if (muffin.alive) {
-                if (muffin.isForward() && muffin.goal == cur_color) {
+                if (muffin.isForward() && muffin.canCombo() && (cast muffin).goal == cur_color) {
                     streak.push(muffin);
                 }
                 else {
                     if (streak.length >= 8) {
-                        //There is a combo streak
-                        for (m_streak in streak) {
-                            m_streak.hit();
-                            UI.score += streak.length * streak.length * 10;
-                            hadCombo = true;
-                        }
+                        validateMuffins(streak);
+                        hadCombo = true;
                     }
                     streak.clear();
-                    if (muffin.isForward()) {
-                        cur_color = muffin.goal;
+                    if (muffin.isForward() && muffin.canCombo()) {
+                        cur_color = (cast muffin).goal;
                         streak.push(muffin);
                     } else {
                         cur_color = FlxColor.TRANSPARENT;
@@ -267,17 +299,16 @@ class PlayState extends FlxState
 		super.update(elapsed);
 
 		if (muffins.length == 0 || muffins.first().path_progress >= GameConst.SPAWN_GAP) {
-            var first : Muffin = muffins.first();
+            var first : BaseMuffin = muffins.first();
 			var x_offset = muffins.length > 0 ? muffins.first().path_progress - GameConst.SPAWN_GAP : 0;
-			muffins.push(cast muffinPool.recycle(Muffin));
-            prepareNextMuffin(muffins.first());
-			muffins.first().resetPath();
-			muffins.first().x += x_offset;
-            muffins.first().path_progress += x_offset;
-            muffins.first().active = false;
-            muffins.first().rightMuffin = first;
+            var next = prepareNextMuffin();
+			next.resetPath();
+			next.x += x_offset;
+            next.path_progress += x_offset;
+            next.active = false;
+            next.rightMuffin = first;
             if (first != null) {
-                first.leftMuffin = muffins.first();
+                first.leftMuffin = next;
             }
 		}
 

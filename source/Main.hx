@@ -6,7 +6,7 @@ import states.LevelSelectionState;
 import states.InstructionsState;
 import flixel.system.FlxAssets;
 import openfl.display.FPS;
-import entities.Muffin;
+import entities.BaseMuffin;
 
 class Main extends Sprite
 {
@@ -18,6 +18,6 @@ class Main extends Sprite
 		FlxAssets.FONT_DEFAULT = "assets/fonts/Vanilla.ttf";
 		addChild(new FlxGame(1920, 1080, InstructionsState, 1, 60, 60, true, false));
 		addChild(new FPS(10, 10, 0xffffff));
-        Muffin.buildAssets();
+        BaseMuffin.buildAssets();
 	}
 }

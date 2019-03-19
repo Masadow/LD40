@@ -63,7 +63,7 @@ class InstructionsState extends FlxState
         trace("Long sequences: ", long_sequences / sequences);
 */
 
-        Muffin.buildAssets();
+//        Muffin.buildAssets();
 	}
 
 	override public function update(elapsed:Float):Void
