@@ -253,10 +253,10 @@ class BaseMuffin extends FlxSprite
             buildAsset("muffin_selected_" + _get_color(color), base, smile_selected, selectorSprite2, null);
 
             for (bonus in GameConst.BONUSES) {
-                var bonus_id = Type.getClassName(bonus).split(".").pop().toLowerCase();
-                var bonus_asset = new FlxSprite(0, 0, "assets/images/bonus/" + bonus_id + ".png");
-                buildAsset("muffin_" + bonus_id + "_unselected_" + _get_color(color), base, smile, null, bonus_asset);
-                buildAsset("muffin_" + bonus_id + "_selected_" + _get_color(color), base, smile_selected, selectorSprite2, bonus_asset);
+                var asset_id = Type.createInstance(bonus, []).asset_id;
+                var bonus_asset = new FlxSprite(0, 0, "assets/images/bonus/" + asset_id + ".png");
+                buildAsset("muffin_" + asset_id + "_unselected_" + _get_color(color), base, smile, null, bonus_asset);
+                buildAsset("muffin_" + asset_id + "_selected_" + _get_color(color), base, smile_selected, selectorSprite2, bonus_asset);
 
                 /*
                 buildAsset("muffin_unselected_" + _get_color(color), headSprite, selectorSprite,

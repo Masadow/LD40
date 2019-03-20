@@ -4,6 +4,7 @@ import flixel.util.FlxColor;
 import flixel.math.FlxPoint;
 
 import entities.bonus.Life;
+import entities.bonus.ColorSwapper;
 
 class GameConst {
     public static var CUPCAKE_WIDTH = 203;
@@ -28,8 +29,8 @@ class GameConst {
     public static var COMBO_TRIGGER = 7; //Length of cupcakes to trigger combos
     public static var BONUS_TRIGGER = 6; //length of cupcakes to spawn bonuses
 
-    public static var BONUSES = [
-        Life
+    public static var BONUSES : Array<Dynamic> = [
+        Life, ColorSwapper
     ];
 
     //Determine the different possibles cupcakes colors

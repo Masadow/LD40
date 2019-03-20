@@ -29,7 +29,7 @@ class Muffin extends BaseMuffin
     {
         if (goal != null) {
             var selected_str = (selected ? "" : "un") + "selected";
-            var bonus_str = bonus != null ? (bonus.id + "_") : "";
+            var bonus_str = bonus != null ? (bonus.asset_id + "_") : "";
             return "muffin_" + bonus_str + selected_str + "_" + BaseMuffin._get_color(goal);
         }
         return null;

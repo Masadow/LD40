@@ -25,7 +25,7 @@ class PlayState extends FlxState
 //	public var selector : Selector;
 	public var ui : UI;
 	public var pause : FlxSprite;
-	private var muffins : List<BaseMuffin>;
+	public var muffins : List<BaseMuffin>;
 	private var muffinPool : FlxGroup;
 
     public static var level : Int; 
@@ -38,7 +38,7 @@ class PlayState extends FlxState
     var goodSwipe : Bool;
 
 
-    var last_id = 0;
+    public var last_id = 0;
     var cur_count = 1;
     var cur_length = 1;
     var cur_bonus : Bonus = null;
@@ -170,7 +170,7 @@ class PlayState extends FlxState
                     var bc = bonusCount.get(m.bonus.idx);
                     if (bc == GameConst.BONUS_TRIGGER) {
                         //Bonus completed
-                        m.bonus.trigger();
+                        m.bonus.trigger(this);
                         bonusCount.remove(m.bonus.idx);
                     } else if (bc != null) {
                         //Check it it's the current spawning combo and cancel future bonus spawn if needed
@@ -271,8 +271,7 @@ class PlayState extends FlxState
         if (streak.length >= GameConst.COMBO_TRIGGER) {
             //There is a combo streak
             for (m_streak in streak) {
-                m_streak.hit();
-                UI.score += streak.length * streak.length * 10;
+                validateMuffins(streak);
                 hadCombo = true;
             }
         }
