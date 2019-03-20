@@ -6,6 +6,7 @@ import flixel.math.FlxPoint;
 import entities.bonus.Life;
 import entities.bonus.ColorSwapper;
 import entities.bonus.Freeze;
+import entities.bonus.ColorKiller;
 
 class GameConst {
     public static var CUPCAKE_WIDTH = 203;
@@ -20,9 +21,9 @@ class GameConst {
         24., // 1
         0, // 2
         31, // 3
-        32, // 4
+        12, // 4
         14, // 5
-        2, // 6
+        22, // 6
         0, // 7
         0 // 8 -> Automatically become bonus
     ];
@@ -31,11 +32,11 @@ class GameConst {
     public static var BONUS_TRIGGER = 6; //length of cupcakes to spawn bonuses
 
     public static var BONUSES : Array<Dynamic> = [
-        Life, Freeze
+        Life, ColorKiller
     ];
 
     //Determine the different possibles cupcakes colors
-	public static var COLORS = [FlxColor.RED, FlxColor.YELLOW, FlxColor.BLUE, FlxColor.GREEN];
+	public static var COLORS = [FlxColor.RED, FlxColor.YELLOW, FlxColor.BLUE/*, FlxColor.GREEN*/];
 
     public static var CUPCAKES_PATH = [
         // LEVEL 1

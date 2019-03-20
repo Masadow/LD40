@@ -165,6 +165,8 @@ class PlayState extends FlxState
         }
         for (muffin in validMuffins) {
             muffin.hit();
+        }
+        for (muffin in validMuffins) {
             if (muffin.canCombo()) {
                 var m : Muffin = cast muffin;
                 if (m.bonus != null) {
@@ -271,10 +273,8 @@ class PlayState extends FlxState
         }
         if (streak.length >= GameConst.COMBO_TRIGGER) {
             //There is a combo streak
-            for (m_streak in streak) {
-                validateMuffins(streak);
-                hadCombo = true;
-            }
+            validateMuffins(streak);
+            hadCombo = true;
         }
         if (hadCombo) {
             FlxG.sound.play(FlxG.random.bool() ? "assets/sounds/right_cream.wav" : "assets/sounds/right_cream_yes.wav");
