@@ -18,19 +18,22 @@ class GameConst {
         24., // 1
         0, // 2
         31, // 3
-        27, // 4
+        32, // 4
         14, // 5
-        5, // 6
-        2, // 7
+        2, // 6
+        0, // 7
         0 // 8 -> Automatically become bonus
     ];
+
+    public static var COMBO_TRIGGER = 7; //Length of cupcakes to trigger combos
+    public static var BONUS_TRIGGER = 6; //length of cupcakes to spawn bonuses
 
     public static var BONUSES = [
         Life
     ];
 
     //Determine the different possibles cupcakes colors
-	public static var COLORS = [FlxColor.RED, FlxColor.YELLOW, FlxColor.BLUE/*, FlxColor.GREEN*/];
+	public static var COLORS = [FlxColor.RED, FlxColor.YELLOW, FlxColor.BLUE, FlxColor.GREEN];
 
     public static var CUPCAKES_PATH = [
         // LEVEL 1

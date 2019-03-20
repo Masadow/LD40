@@ -57,8 +57,8 @@ class PlayState extends FlxState
             var color_id = FlxG.random.int(0, GameConst.COLORS.length - 2);
             last_id = color_id >= last_id ? color_id + 1 : color_id;
 
-            // Spawn a bonus only on 7 length rows
-            cur_bonus = cur_length == 7 ? Type.createInstance(GameConst.BONUSES[FlxG.random.int(0, GameConst.BONUSES.length - 1)], []) : null;
+            // Spawn a bonus only on BONUS_TRIGGER length rows
+            cur_bonus = cur_length == GameConst.BONUS_TRIGGER ? Type.createInstance(GameConst.BONUSES[FlxG.random.int(0, GameConst.BONUSES.length - 1)], []) : null;
             if (cur_bonus != null) {
                 cur_bonus.idx = ++current_combo_idx;
             }
@@ -168,7 +168,7 @@ class PlayState extends FlxState
                 var m : Muffin = cast muffin;
                 if (m.bonus != null) {
                     var bc = bonusCount.get(m.bonus.idx);
-                    if (bc == 7) {
+                    if (bc == GameConst.BONUS_TRIGGER) {
                         //Bonus completed
                         m.bonus.trigger();
                         bonusCount.remove(m.bonus.idx);
@@ -249,7 +249,7 @@ class PlayState extends FlxState
                     streak.push(muffin);
                 }
                 else {
-                    if (streak.length >= 8) {
+                    if (streak.length >= GameConst.COMBO_TRIGGER) {
                         validateMuffins(streak);
                         hadCombo = true;
                     }
@@ -263,7 +263,7 @@ class PlayState extends FlxState
                 }
             }
         }
-        if (streak.length >= 8) {
+        if (streak.length >= GameConst.COMBO_TRIGGER) {
             //There is a combo streak
             for (m_streak in streak) {
                 m_streak.hit();
