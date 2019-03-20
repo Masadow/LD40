@@ -7,6 +7,7 @@ import entities.bonus.Life;
 import entities.bonus.ColorSwapper;
 import entities.bonus.Freeze;
 import entities.bonus.ColorKiller;
+import entities.bonus.StickyKiller;
 
 class GameConst {
     public static var CUPCAKE_WIDTH = 203;
@@ -32,7 +33,7 @@ class GameConst {
     public static var BONUS_TRIGGER = 6; //length of cupcakes to spawn bonuses
 
     public static var BONUSES : Array<Dynamic> = [
-        Life, ColorKiller
+        Life, StickyKiller
     ];
 
     //Determine the different possibles cupcakes colors
