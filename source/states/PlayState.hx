@@ -243,8 +243,13 @@ class PlayState extends FlxState
         var cur_color = FlxColor.TRANSPARENT;
         var streak = new List<BaseMuffin>();
         var hadCombo = false;
+        var skipFirst = true;
         for (muffin in muffins) {
-            if (muffin.alive) {
+            if (skipFirst) {
+                //We skip the first cupcake so we make sure i'll stay alive for spawning purpose
+                skipFirst = false;
+            }
+            else if (muffin.alive) {
                 if (muffin.isForward() && muffin.canCombo() && (cast muffin).goal == cur_color) {
                     streak.push(muffin);
                 }
@@ -300,7 +305,7 @@ class PlayState extends FlxState
 
 		if (muffins.length == 0 || muffins.first().path_progress >= GameConst.SPAWN_GAP) {
             var first : BaseMuffin = muffins.first();
-			var x_offset = muffins.length > 0 ? muffins.first().path_progress - GameConst.SPAWN_GAP : 0;
+			var x_offset = muffins.length > 0 ? first.path_progress - GameConst.SPAWN_GAP : 0;
             var next = prepareNextMuffin();
 			next.resetPath();
 			next.x += x_offset;
