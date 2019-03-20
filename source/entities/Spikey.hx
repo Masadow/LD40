@@ -33,8 +33,9 @@ class Spikey extends BaseMuffin
         return false;
     }
 
-    private override function getNextDirection()
+    public override function updateNextDirection()
     {
+        /*
         var onlySpikey = true;
         var nextRight : BaseMuffin = rightMuffin;
         while (nextRight != null) {
@@ -45,6 +46,8 @@ class Spikey extends BaseMuffin
             nextRight = nextRight.rightMuffin;
         }
         return onlySpikey || leftMuffin == null || (leftMuffin.forward > 0 && path_progress - leftMuffin.path_progress <= GameConst.SPAWN_GAP + 1) ? 1 : -GameConst.BACKWARD_SPEED_FACTOR;
+        */
+        forward = 1;
     }
 
     public override function getType() : String {

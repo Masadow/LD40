@@ -31,6 +31,9 @@ class BaseMuffin extends FlxSprite
     public var rightMuffin : BaseMuffin;
     public var leftMuffin : BaseMuffin;
 
+    private static var counter = 0;
+    public var id : Int;
+
 	private function new(x : Int = 0, y : Int = 0)
 	{
 		super(x, y);
@@ -109,9 +112,9 @@ class BaseMuffin extends FlxSprite
 
     override public function update(elapsed:Float):Void
     {
+//        trace(getType(), id);
         super.update(elapsed);
         if (alive) {
-            forward = getNextDirection();
             updateVelocity(elapsed);
             if (path_step == GameConst.CUPCAKES_PATH[PlayState.level].length) {
                 onPathEnd();
@@ -129,9 +132,31 @@ class BaseMuffin extends FlxSprite
         kill();
     }
 
-    private function getNextDirection()
+    public function updateNextDirection()
     {
-        return leftMuffin == null || (leftMuffin.forward > 0 && path_progress - leftMuffin.path_progress <= GameConst.SPAWN_GAP + 1) ? 1 : -GameConst.BACKWARD_SPEED_FACTOR;
+        if (alive) {
+            //Check if we should close a gap forward
+            var right = rightMuffin;
+            var prev_progress = path_progress;
+            while (right != null) {
+                if (right.path_progress - prev_progress > GameConst.SPAWN_GAP + 1) {
+                    //There's a gap here, check whether this gap is caused by a spikey or not
+                    trace(right.getType());
+                    if (right.getType() == "spikey") {
+                        forward = GameConst.BACKWARD_SPEED_FACTOR;
+                        return ;
+                    }
+                }
+                else if (right.getType() == "spikey") {
+                    break ; //We reach the closest spikey so we won't close the gap
+                }
+                prev_progress = right.path_progress;
+                right = right.rightMuffin;
+            }
+
+            forward = 1;
+//            forward = leftMuffin == null || (leftMuffin.forward > 0 && path_progress - leftMuffin.path_progress <= GameConst.SPAWN_GAP + 1) ? 1 : -GameConst.BACKWARD_SPEED_FACTOR;
+        }
     }
 
     private function updateVelocity(elapsed : Float)
@@ -139,6 +164,8 @@ class BaseMuffin extends FlxSprite
         var to_move = Math.abs(GameConst.SPEED * elapsed * forward);
         if (forward < 0) {
             to_move = Math.min(to_move, path_progress - (leftMuffin.path_progress + GameConst.SPAWN_GAP));
+        } else if (forward > 1) {
+            to_move = Math.min(to_move, (rightMuffin.path_progress - GameConst.SPAWN_GAP) - path_progress);
         }
 
         path_progress += to_move * (forward > 0 ? 1 : -1);
@@ -178,6 +205,7 @@ class BaseMuffin extends FlxSprite
         velocity.y = 0;
         forward = 1;
         path_progress = 0;
+        id = ++counter;
     }
 
     public function canCombo() {
@@ -277,6 +305,10 @@ class BaseMuffin extends FlxSprite
 
     public function isForward() {
         return forward > 0;
+    }
+
+    public function isFastForward() {
+        return forward > 1;
     }
 
     public function getType() : String {

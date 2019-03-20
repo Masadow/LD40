@@ -14,6 +14,7 @@ class GameConst {
     public static var BELT_WIDTH = 250;
     public static var BELT_HALF_WIDTH = 20;
 
+/*
     public static var LENGTH_PROBS = [
         24., // 1
         0, // 2
@@ -21,6 +22,17 @@ class GameConst {
         32, // 4
         14, // 5
         2, // 6
+        0, // 7
+        0 // 8 -> Automatically become bonus
+    ];
+    */
+    public static var LENGTH_PROBS = [
+        80., // 1
+        0, // 2
+        20, // 3
+        0, // 4
+        0, // 5
+        0, // 6
         0, // 7
         0 // 8 -> Automatically become bonus
     ];
@@ -81,6 +93,7 @@ class GameConst {
     ];
 
     //Initial cupcake speed
+//    public static var SPEED = 700;
     public static var SPEED = 700;
     public static var BACKWARD_SPEED_FACTOR = 5;
 }

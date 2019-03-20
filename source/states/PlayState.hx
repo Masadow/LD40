@@ -34,6 +34,7 @@ class PlayState extends FlxState
     var PROB_DECR = 0.075;
     var current_prob = 0.;
     var clearMuffin = new List<BaseMuffin>();
+    var fastForwardMuffin = new List<BaseMuffin>();
     var touched = new List<BaseMuffin>();
     var goodSwipe : Bool;
 
@@ -316,10 +317,20 @@ class PlayState extends FlxState
             handleCombos();            
         }
 
+//        trace("Update starts");
         var i = 0;
         clearMuffin.clear();
         for (muffin in muffins) {
-            muffin.update(elapsed);
+            muffin.updateNextDirection();
+            if (muffin.isFastForward()) {
+                trace("fast forward detected");
+                fastForwardMuffin.push(muffin);
+            } else {
+                muffin.update(elapsed);
+                while (!fastForwardMuffin.isEmpty()) {
+                    fastForwardMuffin.pop().update(elapsed);
+                }
+            }
             if (!muffin.exists) {
                 clearMuffin.push(muffin);
             }
