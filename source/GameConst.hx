@@ -22,9 +22,9 @@ class GameConst {
         24., // 1
         0, // 2
         31, // 3
-        12, // 4
+        32, // 4
         14, // 5
-        22, // 6
+        2, // 6
         0, // 7
         0 // 8 -> Automatically become bonus
     ];
@@ -33,11 +33,11 @@ class GameConst {
     public static var BONUS_TRIGGER = 6; //length of cupcakes to spawn bonuses
 
     public static var BONUSES : Array<Dynamic> = [
-        Life, StickyKiller
+        Life, ColorSwapper
     ];
 
     //Determine the different possibles cupcakes colors
-	public static var COLORS = [FlxColor.RED, FlxColor.YELLOW, FlxColor.BLUE/*, FlxColor.GREEN*/];
+	public static var COLORS = [FlxColor.RED, FlxColor.YELLOW, FlxColor.BLUE, FlxColor.GREEN];
 
     public static var CUPCAKES_PATH = [
         // LEVEL 1
