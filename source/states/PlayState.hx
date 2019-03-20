@@ -37,6 +37,7 @@ class PlayState extends FlxState
     var touched = new List<BaseMuffin>();
     var goodSwipe : Bool;
 
+    public var freezeTimer : Float = 0;
 
     public var last_id = 0;
     var cur_count = 1;
@@ -302,6 +303,10 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 
+        if (freezeTimer > 0) {
+            freezeTimer = Math.max(0, freezeTimer - elapsed);
+        }
+
 		if (muffins.length == 0 || muffins.first().path_progress >= GameConst.SPAWN_GAP) {
             var first : BaseMuffin = muffins.first();
 			var x_offset = muffins.length > 0 ? first.path_progress - GameConst.SPAWN_GAP : 0;
@@ -323,7 +328,7 @@ class PlayState extends FlxState
         var i = 0;
         clearMuffin.clear();
         for (muffin in muffins) {
-            muffin.update(elapsed);
+            muffin.customUpdate(elapsed, freezeTimer != 0);
             if (!muffin.exists) {
                 clearMuffin.push(muffin);
             }

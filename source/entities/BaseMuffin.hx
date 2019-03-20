@@ -107,10 +107,10 @@ class BaseMuffin extends FlxSprite
         }
     }
 
-    override public function update(elapsed:Float):Void
+    public function customUpdate(elapsed:Float, frozen : Bool):Void
     {
         super.update(elapsed);
-        if (alive) {
+        if (alive && !frozen) {
             forward = getNextDirection();
             updateVelocity(elapsed);
             if (path_step == GameConst.CUPCAKES_PATH[PlayState.level].length) {
